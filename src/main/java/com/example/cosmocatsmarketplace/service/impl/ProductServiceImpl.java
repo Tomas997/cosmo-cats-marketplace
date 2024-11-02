@@ -2,7 +2,8 @@ package com.example.cosmocatsmarketplace.service.impl;
 
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.domain.Product;
-import com.example.cosmocatsmarketplace.dto.ProductDto;
+import com.example.cosmocatsmarketplace.dto.ProductCreateDto;
+import com.example.cosmocatsmarketplace.dto.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.service.ProductService;
 
 import java.util.List;
@@ -62,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Product createProduct(ProductDto productDto) {
+    public Product createProduct(ProductCreateDto productDto) {
         Product product = Product.builder()
                 .id(UUID.randomUUID())
                 .name(productDto.getName())
@@ -75,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(ProductDto productDto) {
+    public Product updateProduct(ProductUpdateDto productDto) {
         Product product = getProductById(productDto.getId());
 
         product.setName(productDto.getName());
