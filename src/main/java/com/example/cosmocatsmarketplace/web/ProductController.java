@@ -7,6 +7,7 @@ import com.example.cosmocatsmarketplace.dto.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +36,12 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductCreateDto productCreateDto) {
+    public ResponseEntity<ProductResponseDto> createProduct(@Valid @RequestBody ProductCreateDto productCreateDto) {
         Product product = productService.createProduct(productCreateDto);
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> updateProduct(@RequestBody ProductUpdateDto productRequestDto, @PathVariable UUID id) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@Valid @RequestBody ProductUpdateDto productRequestDto, @PathVariable UUID id) {
         Product product = productService.updateProduct(productRequestDto, id);
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
