@@ -9,6 +9,7 @@ import com.example.cosmocatsmarketplace.service.ProductService;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
         return productList.stream()
                 .filter(product -> product.getId().equals(productId))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
 
