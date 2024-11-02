@@ -13,7 +13,7 @@ public interface ProductService {
 
     Product createProduct(ProductCreateDto product);
 
-    Product updateProduct(ProductUpdateDto product);
+    Product updateProduct(ProductUpdateDto product, UUID id);
 
     void deleteProductById(UUID id);
 }

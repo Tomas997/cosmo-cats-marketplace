@@ -6,6 +6,7 @@ import com.example.cosmocatsmarketplace.dto.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.service.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -15,9 +16,9 @@ import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final List<Product> productList = List.of(
+    private final List<Product> productList = new ArrayList<>(List.of( // Змінюємо на ArrayList
             Product.builder()
-                    .id(UUID.randomUUID()) // згенеруємо унікальний id
+                    .id(UUID.randomUUID())
                     .name("Galactic Crystal")
                     .description("A rare crystal found on the surface of Mars.")
                     .price(299)
@@ -46,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
                             new Category(1, "ARTIFACTS")
                     ))
                     .build()
-    );
+    ));
 
     @Override
     public List<Product> getAllProducts() {
@@ -76,8 +77,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(ProductUpdateDto productDto) {
-        Product product = getProductById(productDto.getId());
+    public Product updateProduct(ProductUpdateDto productDto, UUID id) {
+        Product product = getProductById(id);
 
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
@@ -88,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProductById(UUID id) {
-//        productList.remove()
+        productList.removeIf(product -> product.getId().equals(id));
     }
 }
 
