@@ -1,4 +1,4 @@
-package com.example.cosmocatsmarketplace.web;
+package com.example.cosmocatsmarketplace.controller;
 
 
 import com.example.cosmocatsmarketplace.domain.Product;
@@ -36,13 +36,17 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@Valid @RequestBody ProductCreateDto productCreateDto) {
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductCreateDto productCreateDto) {
         Product product = productService.createProduct(productCreateDto);
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> updateProduct(@Valid @RequestBody ProductUpdateDto productRequestDto, @PathVariable UUID id) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@RequestBody @Valid ProductUpdateDto productRequestDto, @PathVariable UUID id) {
         Product product = productService.updateProduct(productRequestDto, id);
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
+
+
+
+
 }

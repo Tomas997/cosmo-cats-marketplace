@@ -1,7 +1,7 @@
 package com.example.cosmocatsmarketplace.dto;
 
-import com.example.cosmocatsmarketplace.Validator.ValidCategory;
 import com.example.cosmocatsmarketplace.domain.Category;
+import com.example.cosmocatsmarketplace.validator.ValidCategory;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

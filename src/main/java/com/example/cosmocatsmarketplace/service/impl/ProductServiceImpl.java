@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final List<Product> productList = new ArrayList<>(List.of( // Змінюємо на ArrayList
+    private final List<Product> productList = new ArrayList<>(List.of(
             Product.builder()
                     .id(UUID.randomUUID())
                     .name("Galactic Crystal")

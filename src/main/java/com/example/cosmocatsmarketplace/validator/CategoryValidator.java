@@ -1,8 +1,9 @@
-package com.example.cosmocatsmarketplace.Validator;
+package com.example.cosmocatsmarketplace.validator;
 
 import com.example.cosmocatsmarketplace.domain.Category;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.util.List;
 
 public class CategoryValidator implements ConstraintValidator<ValidCategory, List<Category>> {
