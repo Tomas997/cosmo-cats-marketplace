@@ -38,9 +38,10 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductCreateDto productCreateDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductResponseDto createProduct(@RequestBody @Valid ProductCreateDto productCreateDto) {
         Product product = productService.createProduct(productCreateDto);
-        return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
+        return ProductMapper.INSTANCE.toProductResponseDto(product);
     }
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@RequestBody @Valid ProductUpdateDto productRequestDto, @PathVariable UUID id) {

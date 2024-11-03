@@ -45,5 +45,6 @@ public class GlobalExceptionalHandler {
         problemDetail.setTitle("Category Not Found");
         return problemDetail;
     }
+
 }
 

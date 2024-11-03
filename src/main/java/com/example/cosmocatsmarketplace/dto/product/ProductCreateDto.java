@@ -1,6 +1,7 @@
 package com.example.cosmocatsmarketplace.dto.product;
 
 import com.example.cosmocatsmarketplace.domain.Category;
+import com.example.cosmocatsmarketplace.validator.ValidSpaceDescription;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class ProductCreateDto {
     private String name;
     @NotBlank(message = "Description is mandatory")
     @Size(max = 255, message = "Description cannot exceed 255 characters")
+    @ValidSpaceDescription
     private String description;
     @NotNull(message = "Price is mandatory")
     @Min(value = 1, message = "Price cannot be 0 or less")

@@ -31,26 +31,27 @@ public class ProductServiceImpl implements ProductService {
     private void initializeProductList() {
         productList.add(Product.builder()
                 .id(UUID.randomUUID())
-                .name("Galactic Crystal")
-                .description("A rare crystal found on the surface of Mars.")
+                .name("Galactic Star Crystal")
+                .description("A rare star crystal found on the surface of Mars.")
                 .price(299)
                 .category(categoryService.findCategoryById(1))
                 .build());
         productList.add(Product.builder()
                 .id(UUID.randomUUID())
-                .name("Zero-Gravity Boots")
-                .description("Advanced boots designed for optimal movement in zero-gravity environments.")
+                .name("Zero-Gravity Galaxy Boots")
+                .description("Advanced boots designed for optimal movement in galaxy environments.")
                 .price(149)
                 .category(categoryService.findCategoryById(2))
                 .build());
         productList.add(Product.builder()
                 .id(UUID.randomUUID())
-                .name("Lunar Dust Sample")
-                .description("Collected from the surface of the Moon, this dust sample is highly sought by collectors.")
+                .name("Lunar Comet Dust Sample")
+                .description("Collected from the surface of the Moon, this comet dust sample is highly sought by collectors.")
                 .price(499)
                 .category(categoryService.findCategoryById(3))
                 .build());
     }
+
 
 
     @Override
