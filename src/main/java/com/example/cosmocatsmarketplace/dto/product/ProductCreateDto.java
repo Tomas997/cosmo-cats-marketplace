@@ -1,11 +1,8 @@
-package com.example.cosmocatsmarketplace.dto;
+package com.example.cosmocatsmarketplace.dto.product;
 
 import com.example.cosmocatsmarketplace.domain.Category;
-import com.example.cosmocatsmarketplace.validator.ValidCategory;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
-import java.util.List;
 
 
 @Data
@@ -19,7 +16,6 @@ public class ProductCreateDto {
     @NotNull(message = "Price is mandatory")
     @Min(value = 1, message = "Price cannot be 0 or less")
     private Integer price;
-    @NotEmpty(message = "Categories are mandatory")
-    @ValidCategory
-    private List<Category> categories;
+    @NotNull(message = "Category is mandatory")
+    private Category category;
 }

@@ -1,7 +1,6 @@
 package com.example.cosmocatsmarketplace.domain;
 
 
-import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -19,5 +18,5 @@ public class Product {
     private String name;
     private String description;
     private Integer price;
-    private List<Category> categories;
+    private Category category;
 }

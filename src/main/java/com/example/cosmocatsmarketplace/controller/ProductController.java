@@ -2,12 +2,14 @@ package com.example.cosmocatsmarketplace.controller;
 
 
 import com.example.cosmocatsmarketplace.domain.Product;
-import com.example.cosmocatsmarketplace.dto.ProductCreateDto;
-import com.example.cosmocatsmarketplace.dto.ProductResponseDto;
-import com.example.cosmocatsmarketplace.dto.ProductUpdateDto;
+import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
+import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
+import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
+import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +34,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable UUID id) {
-        Product product = productService.getProductById(id);
+        Product product = productService.getProductById(id).orElseThrow(()-> new ProductNotFoundException(id));
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
     @PostMapping
@@ -46,6 +48,11 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProductById(@PathVariable UUID id) {
+        productService.deleteProductById(id);
+    }
 
 
 

@@ -1,9 +1,9 @@
-package com.example.cosmocatsmarketplace.dto;
+package com.example.cosmocatsmarketplace.dto.product;
 
 import com.example.cosmocatsmarketplace.domain.Category;
 import lombok.Data;
 
-import java.util.List;
+
 import java.util.UUID;
 
 @Data
@@ -15,5 +15,5 @@ public class ProductResponseDto {
 
     private Integer price;
 
-    private List<Category> categories;
+    private Category category;
 }
