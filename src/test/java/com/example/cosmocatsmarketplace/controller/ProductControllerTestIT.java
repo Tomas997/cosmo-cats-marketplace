@@ -1,5 +1,6 @@
 package com.example.cosmocatsmarketplace.controller;
 
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -11,15 +12,19 @@ import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
+import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +32,7 @@ import java.util.UUID;
 import java.util.Arrays;
 
 @WebMvcTest(ProductController.class)
-class ProductControllerTest {
+class ProductControllerTestIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,4 +138,26 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void testGetProductByIdFail() throws Exception {
+        UUID productID = UUID.randomUUID();
+        Mockito.when(productService.getProductById(productID)).thenThrow(ProductNotFoundException.class);
+
+        mockMvc.perform(get("/api/v1/products/{id}", productID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void testCreateProductFail() throws Exception {
+        ProductCreateDto productCreateDto = new ProductCreateDto("Galactic Star Crystal", "A rare star crystal found on the surface of Mars.", -150, new Category(1L, "Galaxy cat toy"));
+
+        mockMvc.perform(post("/api/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productCreateDto))) // Serialize the object
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
 }

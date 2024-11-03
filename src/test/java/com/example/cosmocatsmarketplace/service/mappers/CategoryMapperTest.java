@@ -1,8 +1,5 @@
 package com.example.cosmocatsmarketplace.service.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
 import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
@@ -11,6 +8,8 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CategoryMapperTest {
 
@@ -45,4 +44,17 @@ public class CategoryMapperTest {
             assertEquals(categoryList.get(i).getName(), categoryDtoList.get(i).getName(), "Names should match at index " + i);
         }
     }
+
+    @Test
+    void testReturnNullWhenCategoryListIsNull() {
+        List<CategoryDto> categoryResult = categoryMapper.categoryListToCategoryDtoList(null);
+        assertNull(categoryResult);
+    }
+
+    @Test
+    void testReturnNullWhenCategoryIsNull() {
+        CategoryDto categoryDto = categoryMapper.categoryToCategoryDto(null);
+        assertNull(categoryDto);
+    }
+
 }

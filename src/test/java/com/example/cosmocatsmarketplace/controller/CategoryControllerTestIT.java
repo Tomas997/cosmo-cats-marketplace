@@ -1,27 +1,31 @@
 package com.example.cosmocatsmarketplace.controller;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
 import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
 import com.example.cosmocatsmarketplace.service.CategoryService;
+import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
-class CategoryControllerTest {
+class CategoryControllerTestIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -76,4 +80,17 @@ class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Galaxy cat toy"));
     }
+
+    @Test
+    void testGetCategoryByIdFail() throws Exception {
+        long categoryId = 100L;
+        Mockito.when(categoryService.findCategoryById(categoryId)).thenThrow(CategoryNotFoundException.class);
+
+        mockMvc.perform(get("/api/v1/categories/{id}", categoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+
+
 }
