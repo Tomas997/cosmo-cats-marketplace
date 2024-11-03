@@ -18,7 +18,6 @@ public class ProductMapperTest {
 
     @Test
     public void testToProductResponseDto() {
-        // Given
         UUID id = UUID.randomUUID();
         Category category = new Category(1L, "Test Category");
         Product product = Product.builder()
@@ -29,10 +28,8 @@ public class ProductMapperTest {
                 .category(category)
                 .build();
 
-        // When
         ProductResponseDto productResponseDto = productMapper.toProductResponseDto(product);
 
-        // Then
         assertNotNull(productResponseDto, "ProductResponseDto should not be null");
         assertEquals(product.getId(), productResponseDto.getId(), "ID should match");
         assertEquals(product.getName(), productResponseDto.getName(), "Name should match");

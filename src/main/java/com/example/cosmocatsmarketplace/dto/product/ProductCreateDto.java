@@ -3,10 +3,14 @@ package com.example.cosmocatsmarketplace.dto.product;
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.validator.ValidSpaceDescription;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductCreateDto {
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Name cannot exceed 100 characters")
