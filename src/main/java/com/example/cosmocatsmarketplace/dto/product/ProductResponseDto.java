@@ -1,17 +1,21 @@
-package com.example.cosmocatsmarketplace.dto;
+package com.example.cosmocatsmarketplace.dto.product;
 
 import com.example.cosmocatsmarketplace.domain.Category;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
-public class ProductDto {
+@AllArgsConstructor
+public class ProductResponseDto {
     private UUID id;
     private String name;
+
     private String description;
+
     private Integer price;
-    private List<Category> categories;
+
+    private Category category;
 }
