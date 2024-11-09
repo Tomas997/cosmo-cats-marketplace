@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ProductServiceTest {
+class ProductServiceTest {
 
     @Mock
     private CategoryService categoryService;
@@ -30,13 +30,13 @@ public class ProductServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(categoryService.findCategoryById(1L)).thenReturn(new Category(1L, "Galaxy cat toy"));
-        when(categoryService.findCategoryById(2L)).thenReturn(new Category(2L, "Star cats"));
-        when(categoryService.findCategoryById(3L)).thenReturn(new Category(3L, "Cosmic Pet Apparel"));
+        when(categoryService.findCategoryById(1L)).thenReturn(Category.builder().id(1L).name("Galaxy cat toy").build());
+        when(categoryService.findCategoryById(2L)).thenReturn(Category.builder().id(2L).name("Star cats").build());
+        when(categoryService.findCategoryById(3L)).thenReturn(Category.builder().id(3L).name("Cosmic Pet Apparel").build());
     }
 
     @Test
-    public void testGetAllProducts() {
+    void testGetAllProducts() {
         List<Product> products = productService.getAllProducts();
 
         assertNotNull(products, "Product list should not be null");
@@ -44,7 +44,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductById_ExistingId() {
+    void testGetProductById_ExistingId() {
         UUID existingId = productService.getAllProducts().get(0).getId();
 
         Optional<Product> product = productService.getProductById(existingId);
@@ -54,7 +54,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductById_NonExistingId() {
+    void testGetProductById_NonExistingId() {
         UUID nonExistingId = UUID.randomUUID();
 
         Optional<Product> product = productService.getProductById(nonExistingId);
@@ -63,12 +63,14 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testCreateProduct() {
-        ProductCreateDto productDto = new ProductCreateDto();
-        productDto.setName("New Product");
-        productDto.setDescription("Description of new product");
-        productDto.setPrice(200);
-        productDto.setCategory(new Category(1L, "Galaxy cat toy"));
+    void testCreateProduct() {
+        ProductCreateDto productDto = ProductCreateDto.builder()
+                .name("New Product")
+                .description("Description of new product")
+                .price(200)
+                .category(Category.builder().id(1L).name("Galaxy cat toy").build())
+                .build();
+
 
         Product createdProduct = productService.createProduct(productDto);
 
@@ -79,13 +81,15 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testUpdateProduct_ExistingId() {
+    void testUpdateProduct_ExistingId() {
         UUID existingId = productService.getAllProducts().get(0).getId();
-        ProductUpdateDto productDto = new ProductUpdateDto();
-        productDto.setName("Updated Product");
-        productDto.setDescription("Updated Description");
-        productDto.setPrice(300);
-        productDto.setCategory(new Category(2L, "Star cats"));
+        ProductUpdateDto productDto = ProductUpdateDto.builder()
+                .name("Updated Product")
+                .description("Updated Description")
+                .price(300)
+                .category(Category.builder().id(2L).name("Star cats").build())
+                .build();
+
 
         Product updatedProduct = productService.updateProduct(productDto, existingId);
 
@@ -94,16 +98,16 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testUpdateProduct_NonExistingId() {
+    void testUpdateProduct_NonExistingId() {
         UUID nonExistingId = UUID.randomUUID();
-        ProductUpdateDto productDto = new ProductUpdateDto();
+        ProductUpdateDto productDto = ProductUpdateDto.builder().build();
 
         assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(productDto, nonExistingId),
                 "ProductNotFoundException should be thrown for non-existing ID");
     }
 
     @Test
-    public void testDeleteProductById_ExistingId() {
+    void testDeleteProductById_ExistingId() {
         UUID existingId = productService.getAllProducts().get(0).getId();
 
         boolean isDeleted = productService.deleteProductById(existingId);
@@ -113,7 +117,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testDeleteProductById_NonExistingId() {
+    void testDeleteProductById_NonExistingId() {
         UUID nonExistingId = UUID.randomUUID();
 
         boolean isDeleted = productService.deleteProductById(nonExistingId);

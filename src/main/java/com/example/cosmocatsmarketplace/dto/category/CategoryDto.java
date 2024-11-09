@@ -2,13 +2,13 @@ package com.example.cosmocatsmarketplace.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
-@Data
+@Value
 @Builder
-@AllArgsConstructor
+@Jacksonized
 public class CategoryDto {
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Title cannot exceed 100 characters")

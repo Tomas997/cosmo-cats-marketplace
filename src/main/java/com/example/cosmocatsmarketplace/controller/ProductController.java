@@ -21,9 +21,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/products")
 public class ProductController {
     private final ProductService productService;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
@@ -34,15 +36,17 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable UUID id) {
-        Product product = productService.getProductById(id).orElseThrow(()-> new ProductNotFoundException(id));
+        Product product = productService.getProductById(id).orElseThrow(() -> new ProductNotFoundException(id));
         return ResponseEntity.ok(ProductMapper.INSTANCE.toProductResponseDto(product));
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponseDto createProduct(@RequestBody @Valid ProductCreateDto productCreateDto) {
         Product product = productService.createProduct(productCreateDto);
         return ProductMapper.INSTANCE.toProductResponseDto(product);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@RequestBody @Valid ProductUpdateDto productRequestDto, @PathVariable UUID id) {
         Product product = productService.updateProduct(productRequestDto, id);
@@ -54,7 +58,4 @@ public class ProductController {
     public void deleteProductById(@PathVariable UUID id) {
         productService.deleteProductById(id);
     }
-
-
-
 }

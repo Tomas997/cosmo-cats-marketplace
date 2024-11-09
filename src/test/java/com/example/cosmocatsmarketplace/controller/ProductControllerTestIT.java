@@ -54,8 +54,9 @@ class ProductControllerTestIT {
     @Test
     void testGetAllProducts() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product(UUID.randomUUID(), "Product 1", "Description 1", 100, new Category(1L, "Category 1")),
-                new Product(UUID.randomUUID(), "Product 2", "Description 2", 200, new Category(2L, "Category 2"))
+
+                Product.builder().id(UUID.randomUUID()).name("Product 1").description("Description 1").price(100).category(Category.builder().id(1L).name("Category 1").build()).build(),
+                Product.builder().id(UUID.randomUUID()).name("Product 2").description("Description 2").price(200).category(Category.builder().id(2L).name("Category 2").build()).build()
         );
 
         List<ProductResponseDto> productResponseDtos = Arrays.asList(
@@ -78,7 +79,8 @@ class ProductControllerTestIT {
     @Test
     void testGetProductById() throws Exception {
         UUID productId = UUID.randomUUID();
-        Product product = new Product(productId, "Product 1", "Description 1", 100, new Category(1L, "Category 1"));
+
+        Product product = Product.builder().id(productId).name("Product 1").description("Description 1").price(100).category(Category.builder().id(1L).name("Category 1").build()).build();
         ProductResponseDto productResponseDto = new ProductResponseDto(productId, "Product 1", "Description 1", 100, product.getCategory());
 
         when(productService.getProductById(productId)).thenReturn(Optional.of(product));
@@ -92,9 +94,9 @@ class ProductControllerTestIT {
     }
 
     @Test
-    public void testCreateProduct() throws Exception {
-        ProductCreateDto productCreateDto = new ProductCreateDto("New Product", "planet thing", 150, new Category(1L, "Category 1"));
-        Product product = new Product(UUID.randomUUID(), "New Product", "planet thing", 150, new Category(1L, "Category 1"));
+    void testCreateProduct() throws Exception {
+        ProductCreateDto productCreateDto = ProductCreateDto.builder().name("New Product").description("planet thing").price(150).category(Category.builder().id(1L).name("Category 1").build()).build();
+        Product product = Product.builder().id(UUID.randomUUID()).name("New Product").description("planet thing").price(150).category(Category.builder().id(1L).name("Category 1").build()).build();
         ProductResponseDto productResponseDto = new ProductResponseDto(product.getId(), "New Product", "planet thing", 150, product.getCategory());
 
         when(productService.createProduct(productCreateDto)).thenReturn(product);
@@ -109,12 +111,12 @@ class ProductControllerTestIT {
     }
 
 
-
     @Test
     void testUpdateProduct() throws Exception {
         UUID productId = UUID.randomUUID();
-        ProductUpdateDto productUpdateDto = new ProductUpdateDto("Updated Product", "planet thing", 200, new Category(2L, "Category 2"));
-        Product updatedProduct = new Product(productId, "Updated Product", "planet thing", 200, new Category(2L, "Category 2"));
+
+        ProductUpdateDto productUpdateDto = ProductUpdateDto.builder().name("Updated Product").description("planet thing").price(200).category(Category.builder().id(2L).name("Category 2").build()).build();
+        Product updatedProduct = Product.builder().id(productId).name("Updated Product").description("planet thing").price(200).category(Category.builder().id(2L).name("Category 2").build()).build();
         ProductResponseDto productResponseDto = new ProductResponseDto(productId, "Updated Product", "planet thing", 200, updatedProduct.getCategory());
 
         when(productService.updateProduct(productUpdateDto, productId)).thenReturn(updatedProduct);
@@ -151,7 +153,7 @@ class ProductControllerTestIT {
 
     @Test
     void testCreateProductFail() throws Exception {
-        ProductCreateDto productCreateDto = new ProductCreateDto("Galactic Star Crystal", "A rare star crystal found on the surface of Mars.", -150, new Category(1L, "Galaxy cat toy"));
+        ProductCreateDto productCreateDto = ProductCreateDto.builder().name("Galactic Star Crystal").description( "A rare star crystal found on the surface of Mars.").price(-150).category( Category.builder().id(1L).name( "Galaxy cat toy").build()).build();
 
         mockMvc.perform(post("/api/v1/products")
                         .contentType(MediaType.APPLICATION_JSON)

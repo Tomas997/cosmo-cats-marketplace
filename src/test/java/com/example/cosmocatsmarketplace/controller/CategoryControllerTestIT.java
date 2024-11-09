@@ -44,14 +44,14 @@ class CategoryControllerTestIT {
     @Test
     void testGetAllCategories() throws Exception {
         List<Category> categories = Arrays.asList(
-                new Category(1L, "Galaxy cat toy"),
-                new Category(2L, "Star cats"),
-                new Category(3L, "Cosmic Pet Apparel")
+                Category.builder().id(1L).name("Galaxy cat toy").build(),
+                Category.builder().id(2L).name("Star cats").build(),
+                Category.builder().id(3L).name("Cosmic Pet Apparel").build()
         );
         List<CategoryDto> categoryDtos = Arrays.asList(
-                new CategoryDto("Galaxy cat toy"),
-                new CategoryDto("Star cats"),
-                new CategoryDto("Cosmic Pet Apparel")
+                CategoryDto.builder().name("Galaxy cat toy").build(),
+                CategoryDto.builder().name("Star cats").build(),
+                CategoryDto.builder().name("Cosmic Pet Apparel").build()
         );
 
         when(categoryService.findAllCategories()).thenReturn(categories);
@@ -69,8 +69,8 @@ class CategoryControllerTestIT {
     @Test
     void testGetCategoryById() throws Exception {
         long categoryId = 1L;
-        Category category = new Category(categoryId, "Galaxy cat toy");
-        CategoryDto categoryDto = new CategoryDto("Galaxy cat toy");
+        Category category = Category.builder().id(1L).name("Galaxy cat toy").build();
+        CategoryDto categoryDto = CategoryDto.builder().name("Galaxy cat toy").build();
 
         when(categoryService.findCategoryById(categoryId)).thenReturn(category);
         when(categoryMapper.categoryToCategoryDto(category)).thenReturn(categoryDto);

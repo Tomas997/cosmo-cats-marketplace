@@ -12,14 +12,14 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.UUID;
 
-public class ProductMapperTest {
+class ProductMapperTest {
 
     private final ProductMapper productMapper = Mappers.getMapper(ProductMapper.class);
 
     @Test
-    public void testToProductResponseDto() {
+    void testToProductResponseDto() {
         UUID id = UUID.randomUUID();
-        Category category = new Category(1L, "Test Category");
+        Category category = Category.builder().id(1L).name("Test Category").build();
         Product product = Product.builder()
                 .id(id)
                 .name("Test Product")
