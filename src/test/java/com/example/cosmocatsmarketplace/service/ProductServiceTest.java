@@ -1,39 +1,29 @@
 package com.example.cosmocatsmarketplace.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.domain.Product;
 import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import com.example.cosmocatsmarketplace.service.impl.ProductServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(classes = {ProductServiceImpl.class})
 class ProductServiceTest {
 
-    @Mock
-    private CategoryService categoryService;
-
-    @InjectMocks
-    private ProductServiceImpl productService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(categoryService.findCategoryById(1L)).thenReturn(Category.builder().id(1L).name("Galaxy cat toy").build());
-        when(categoryService.findCategoryById(2L)).thenReturn(Category.builder().id(2L).name("Star cats").build());
-        when(categoryService.findCategoryById(3L)).thenReturn(Category.builder().id(3L).name("Cosmic Pet Apparel").build());
-    }
+    @Autowired
+    private ProductService productService;
+    @MockBean
+    private CategoryService mockCategoryService;
 
     @Test
     void testGetAllProducts() {
@@ -124,4 +114,6 @@ class ProductServiceTest {
 
         assertFalse(isDeleted, "Product should not be deleted for non-existing ID");
     }
+
+
 }

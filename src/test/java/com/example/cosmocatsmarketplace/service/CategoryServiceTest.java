@@ -1,28 +1,23 @@
 package com.example.cosmocatsmarketplace.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
 import com.example.cosmocatsmarketplace.service.impl.CategoryServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-public class CategoryServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    private CategoryServiceImpl categoryService;
-
-    @BeforeEach
-    public void setUp() {
-        categoryService = new CategoryServiceImpl();
-    }
+@SpringBootTest(classes = {CategoryServiceImpl.class})
+class CategoryServiceTest {
+    @Autowired
+    private CategoryService categoryService;
 
     @Test
-    public void testFindAllCategories() {
+    void testFindAllCategories() {
         List<Category> categories = categoryService.findAllCategories();
 
         assertNotNull(categories, "Categories list should not be null");
@@ -30,7 +25,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    public void testFindCategoryById_ExistingId() {
+    void testFindCategoryById_ExistingId() {
         long categoryId = 1L;
 
         Category category = categoryService.findCategoryById(categoryId);
@@ -41,7 +36,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    public void testFindCategoryById_NonExistingId() {
+    void testFindCategoryById_NonExistingId() {
         long nonExistingId = 99L;
 
         assertThrows(CategoryNotFoundException.class, () -> categoryService.findCategoryById(nonExistingId),

@@ -11,12 +11,12 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CategoryMapperTest {
+class CategoryMapperTest {
 
     private final CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
 
     @Test
-    public void testCategoryToCategoryDto() {
+    void testCategoryToCategoryDto() {
         Category category = Category.builder()
                 .id(1L)
                 .name("Test Category")
@@ -29,7 +29,7 @@ public class CategoryMapperTest {
     }
 
     @Test
-    public void testCategoryListToCategoryDtoList() {
+    void testCategoryListToCategoryDtoList() {
         List<Category> categoryList = Arrays.asList(
                 Category.builder().id(1L).name("Category 1").build(),
                 Category.builder().id(2L).name("Category 2").build()

@@ -12,14 +12,14 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Builder
 @Jacksonized
-@GroupSequence({ProductCreateDto.class, Extended.class})
+@GroupSequence({ProductUpdateDto.class, Extended.class})
 public class ProductUpdateDto {
     @NotBlank(message = "Name is mandatory")
     @Size(max = 100, message = "Name cannot exceed 100 characters")
     String name;
     @NotBlank(message = "Description is mandatory")
     @Size(max = 255, message = "Description cannot exceed 255 characters")
-    @ValidSpaceDescription(groups = Extended.class)
+    @ValidSpaceDescription(groups = Extended.class)  //
     String description;
     @NotNull(message = "Price is mandatory")
     @Min(value = 1, message = "Price cannot be 0 or less")
