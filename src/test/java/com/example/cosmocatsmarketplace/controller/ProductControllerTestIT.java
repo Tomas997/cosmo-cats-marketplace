@@ -60,8 +60,8 @@ class ProductControllerTestIT {
         );
 
         List<ProductResponseDto> productResponseDtos = Arrays.asList(
-                new ProductResponseDto(products.get(0).getId(), "Product 1", "Description 1", 100, products.get(0).getCategory()),
-                new ProductResponseDto(products.get(1).getId(), "Product 2", "Description 2", 200, products.get(1).getCategory())
+                ProductResponseDto.builder().id(products.get(0).getId()).name("Product 1").description("Description 1").price(100).category(products.get(0).getCategory()).build(),
+                ProductResponseDto.builder().id(products.get(1).getId()).name("Product 2").description("Description 2").price(200).category(products.get(1).getCategory()).build()
         );
 
         when(productService.getAllProducts()).thenReturn(products);
@@ -81,9 +81,10 @@ class ProductControllerTestIT {
         UUID productId = UUID.randomUUID();
 
         Product product = Product.builder().id(productId).name("Product 1").description("Description 1").price(100).category(Category.builder().id(1L).name("Category 1").build()).build();
-        ProductResponseDto productResponseDto = new ProductResponseDto(productId, "Product 1", "Description 1", 100, product.getCategory());
+        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(productId).name("Product 1").description("Description 1").price(100).category(product.getCategory()).build();
 
-        when(productService.getProductById(productId)).thenReturn(Optional.of(product));
+
+                when(productService.getProductById(productId)).thenReturn(Optional.of(product));
         when(productMapper.toProductResponseDto(product)).thenReturn(productResponseDto);
 
         mockMvc.perform(get("/api/v1/products/{id}", productId)
@@ -97,7 +98,7 @@ class ProductControllerTestIT {
     void testCreateProduct() throws Exception {
         ProductCreateDto productCreateDto = ProductCreateDto.builder().name("New Product").description("planet thing").price(150).category(Category.builder().id(1L).name("Category 1").build()).build();
         Product product = Product.builder().id(UUID.randomUUID()).name("New Product").description("planet thing").price(150).category(Category.builder().id(1L).name("Category 1").build()).build();
-        ProductResponseDto productResponseDto = new ProductResponseDto(product.getId(), "New Product", "planet thing", 150, product.getCategory());
+        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(product.getId()).name("New Product").description("planet thing").price(150).category(product.getCategory()).build();
 
         when(productService.createProduct(productCreateDto)).thenReturn(product);
         when(productMapper.toProductResponseDto(product)).thenReturn(productResponseDto);
@@ -117,7 +118,7 @@ class ProductControllerTestIT {
 
         ProductUpdateDto productUpdateDto = ProductUpdateDto.builder().name("Updated Product").description("planet thing").price(200).category(Category.builder().id(2L).name("Category 2").build()).build();
         Product updatedProduct = Product.builder().id(productId).name("Updated Product").description("planet thing").price(200).category(Category.builder().id(2L).name("Category 2").build()).build();
-        ProductResponseDto productResponseDto = new ProductResponseDto(productId, "Updated Product", "planet thing", 200, updatedProduct.getCategory());
+        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(productId).name("Updated Product").description("planet thing").price(200).category(updatedProduct.getCategory()).build();
 
         when(productService.updateProduct(productUpdateDto, productId)).thenReturn(updatedProduct);
         when(productMapper.toProductResponseDto(updatedProduct)).thenReturn(productResponseDto);
