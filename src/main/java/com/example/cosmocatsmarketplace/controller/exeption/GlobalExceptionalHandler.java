@@ -1,6 +1,7 @@
 package com.example.cosmocatsmarketplace.controller.exeption;
 
 import com.example.cosmocatsmarketplace.dto.ConstraintViolationProblemDetails;
+import com.example.cosmocatsmarketplace.featuretoggle.exeption.FeatureToggleNotEnabledException;
 import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +16,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.URI;
 
+import static java.net.URI.create;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ProblemDetail.forStatusAndDetail;
+
 
 @RestControllerAdvice
 public class GlobalExceptionalHandler extends ResponseEntityExceptionHandler {
@@ -46,6 +49,14 @@ public class GlobalExceptionalHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(BAD_REQUEST)
                 .body(ConstraintViolationProblemDetails.of(e));
+    }
+
+    @ExceptionHandler(FeatureToggleNotEnabledException.class)
+    ProblemDetail handleFeatureToggleNotEnabledException(FeatureToggleNotEnabledException ex) {
+        ProblemDetail problemDetail = forStatusAndDetail(NOT_FOUND, ex.getMessage());
+        problemDetail.setType(create("feature-disabled"));
+        problemDetail.setTitle("Feature is disabled");
+        return problemDetail;
     }
 }
 
