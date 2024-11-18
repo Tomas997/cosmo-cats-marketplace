@@ -2,7 +2,7 @@ package com.example.cosmocatsmarketplace.controller;
 
 import com.example.cosmocatsmarketplace.dto.cosmocat.CosmoCatDto;
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
-import com.example.cosmocatsmarketplace.featuretoggle.annotation.FeatureToggle;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggle;
 import com.example.cosmocatsmarketplace.service.CosmoCatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

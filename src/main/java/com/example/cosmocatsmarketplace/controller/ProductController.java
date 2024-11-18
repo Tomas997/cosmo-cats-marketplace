@@ -6,7 +6,7 @@ import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
-import com.example.cosmocatsmarketplace.featuretoggle.annotation.FeatureToggle;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggle;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;

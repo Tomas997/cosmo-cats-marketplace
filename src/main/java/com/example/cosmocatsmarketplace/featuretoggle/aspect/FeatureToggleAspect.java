@@ -3,7 +3,7 @@ package com.example.cosmocatsmarketplace.featuretoggle.aspect;
 
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggleService;
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
-import com.example.cosmocatsmarketplace.featuretoggle.annotation.FeatureToggle;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggle;
 import com.example.cosmocatsmarketplace.featuretoggle.exeption.FeatureToggleNotEnabledException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

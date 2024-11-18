@@ -10,6 +10,9 @@ import com.example.cosmocatsmarketplace.domain.Product;
 import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
+import com.example.cosmocatsmarketplace.featuretoggle.annotation.DisabledFeatureToggle;
+import com.example.cosmocatsmarketplace.featuretoggle.annotation.EnabledFeatureToggle;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
@@ -33,6 +36,7 @@ import java.util.Arrays;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTestIT {
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -162,5 +166,23 @@ class ProductControllerTestIT {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @Test
+    @DisabledFeatureToggle(FeatureToggles.KITTY_PRODUCTS)
+    void shouldGet404ForGetProductById() throws Exception {
+        UUID id = UUID.randomUUID();
+        mockMvc.perform(get("/api/v1/products/{id}", id))
+                .andExpect(status().isNotFound());
+    }
 
+    @Test
+    @EnabledFeatureToggle(FeatureToggles.KITTY_PRODUCTS)
+    void shouldGet200ForGetProductById() throws Exception {
+        Product product = Product.builder().id(UUID.randomUUID()).name("Product 1").description("Description 1").price(100).category(Category.builder().id(1L).name("Category 1").build()).build();
+
+        UUID id = product.getId();
+        when(productService.getProductById(id)).thenReturn(Optional.of(product));
+
+        mockMvc.perform(get("/api/v1/products/{id}", id))
+                .andExpect(status().isOk());
+    }
 }
