@@ -5,6 +5,8 @@ import com.example.cosmocatsmarketplace.domain.Product;
 import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
+import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggle;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
@@ -32,6 +34,7 @@ public class ProductController {
                 .toList());
     }
 
+    @FeatureToggle(FeatureToggles.KITTY_PRODUCTS)
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable UUID id) {
         Product product = productService.getProductById(id).orElseThrow(() -> new ProductNotFoundException(id));
