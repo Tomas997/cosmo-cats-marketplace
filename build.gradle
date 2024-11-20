@@ -36,7 +36,7 @@ apply from: "${rootProject.projectDir}/gradle/test.gradle"
 apply from: "${rootProject.projectDir}/gradle/jacoco.gradle"
 
 dependencies {
-    implementation group: 'org.springframework', name: 'spring-aspects', version: '6.2.0'
+    implementation 'org.springframework:spring-aspects:6.2.0'
     compileOnly "org.projectlombok:lombok"
     compileOnly "org.mapstruct:mapstruct:1.6.2"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
