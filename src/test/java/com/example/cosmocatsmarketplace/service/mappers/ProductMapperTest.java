@@ -10,6 +10,7 @@ import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Set;
 import java.util.UUID;
 
 class ProductMapperTest {
@@ -19,13 +20,13 @@ class ProductMapperTest {
     @Test
     void testToProductResponseDto() {
         UUID id = UUID.randomUUID();
-        Category category = Category.builder().id(1L).name("Test Category").build();
+        Set<Category> category = Set.of(Category.builder().id(1L).name("Test Category").build());
         Product product = Product.builder()
                 .id(id)
                 .name("Test Product")
                 .description("Test Description")
                 .price(100)
-                .category(category)
+                .categories(category)
                 .build();
 
         ProductResponseDto productResponseDto = productMapper.toProductResponseDto(product);
@@ -35,6 +36,6 @@ class ProductMapperTest {
         assertEquals(product.getName(), productResponseDto.getName(), "Name should match");
         assertEquals(product.getDescription(), productResponseDto.getDescription(), "Description should match");
         assertEquals(product.getPrice(), productResponseDto.getPrice(), "Price should match");
-        assertEquals(product.getCategory(), productResponseDto.getCategory(), "Category should match");
+        assertEquals(product.getCategories(), productResponseDto.getCategories(), "Category should match");
     }
 }

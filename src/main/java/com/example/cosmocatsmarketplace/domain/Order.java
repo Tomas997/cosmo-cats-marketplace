@@ -9,7 +9,10 @@ import java.util.UUID;
 @Data
 @Builder
 public class Order {
-
-    private UUID id;
-    private List<Product> products;
+    UUID id;
+    String consumerName;
+    String address;
+    String email;
+    List<OrderItem> orderItems;
+    double totalPrice;
 }

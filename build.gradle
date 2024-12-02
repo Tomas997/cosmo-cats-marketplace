@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.5'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'org.barfuin.gradle.jacocolog' version '3.1.0'
+//    id 'org.liquibase.gradle' version '2.2.0'
 }
 
 group = 'com.example'
@@ -36,6 +37,9 @@ apply from: "${rootProject.projectDir}/gradle/test.gradle"
 apply from: "${rootProject.projectDir}/gradle/jacoco.gradle"
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.liquibase:liquibase-core:4.30.0'
+    implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'org.springframework:spring-aspects:6.2.0'
     compileOnly "org.projectlombok:lombok"
     compileOnly "org.mapstruct:mapstruct:1.6.2"
@@ -53,9 +57,43 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+//    liquibaseRuntime 'org.liquibase:liquibase-core:4.24.0'
+//    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
+//    liquibaseRuntime 'info.picocli:picocli:4.7.5'
+//    liquibaseRuntime 'org.yaml:snakeyaml:1.33'
+//    liquibaseRuntime 'org.postgresql:postgresql:42.7.4'
+
 }
+
+//apply plugin: "org.liquibase.gradle"
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
+//liquibase {
+//    activities {
+//        main {
+//            changelogFile "src/main/resources/db/changelog/db.changelog.yaml"
+//            url "postgresql://localhost:5432/web_cosmocats"
+//            username "postgres"
+//            password "Andriy"
+//        }
+//    }
+//    runList = 'main'
+//}
+//
+//task('deploy changeLog') {
+//    doFirst() {
+//        liquibase {
+//            activities {
+//                main {
+//                    changeLogFile System.properties.liquibaseChangeLogFile
+//                    contexts System.properties.liquibaseContexts
+//                }
+//            }
+//        }
+//    }
+//}
+//update.dependsOn('deploy changeLog')

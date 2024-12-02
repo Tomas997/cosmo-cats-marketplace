@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,21 +26,29 @@ class CategoryServiceTest {
     }
 
     @Test
-    void testFindCategoryById_ExistingId() {
+    void testGetCategoryById_ExistingId() {
         long categoryId = 1L;
 
-        Category category = categoryService.findCategoryById(categoryId);
+        // Повертаємо Optional<Category> з сервісу
+        Optional<Category> category = categoryService.getCategoryById(categoryId);
 
-        assertNotNull(category, "Category should not be null");
-        assertEquals(categoryId, category.getId(), "Category ID should match");
-        assertEquals("Galaxy cat toy", category.getName(), "Category name should match");
+        // Перевіряємо, що Optional не порожній
+        assertTrue(category.isPresent(), "Category should not be empty");
+
+        // Отримуємо категорію з Optional
+        Category foundCategory = category.get();
+
+        // Перевіряємо правильність значень
+        assertEquals(categoryId, foundCategory.getId(), "Category ID should match");
+        assertEquals("Galaxy cat toy", foundCategory.getName(), "Category name should match");
     }
 
+
     @Test
-    void testFindCategoryById_NonExistingId() {
+    void testGetCategoryById_NonExistingId() {
         long nonExistingId = 99L;
 
-        assertThrows(CategoryNotFoundException.class, () -> categoryService.findCategoryById(nonExistingId),
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategoryById(nonExistingId),
                 "CategoryNotFoundException should be thrown for non-existing ID");
     }
 }

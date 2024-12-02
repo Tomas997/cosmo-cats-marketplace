@@ -1,29 +1,62 @@
 package com.example.cosmocatsmarketplace.service.impl;
 
 import com.example.cosmocatsmarketplace.domain.Category;
+import com.example.cosmocatsmarketplace.domain.Product;
+import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
+import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
+import com.example.cosmocatsmarketplace.repository.CategoryRepository;
+import com.example.cosmocatsmarketplace.repository.entity.CategoryEntity;
 import com.example.cosmocatsmarketplace.service.CategoryService;
 import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
+import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    List<Category> categoryList = new ArrayList<>(List.of(
-            Category.builder().id(1L).name("Galaxy cat toy").build(),
-            Category.builder().id(2L).name("Star cats").build(),
-            Category.builder().id(3L).name("Cosmic Pet Apparel").build()
-    ));
+    private final CategoryRepository repository;
+    private final CategoryMapper mapper;
 
-
-    @Override
-    public List<Category> findAllCategories() {
-        return categoryList;
+    public CategoryServiceImpl(CategoryRepository repository, CategoryMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Category findCategoryById(long categoryId) {
-        return categoryList.stream().filter(category -> category.getId() == categoryId).findFirst().orElseThrow(() -> new CategoryNotFoundException(categoryId));
+    public List<Category> findAllCategories() {
+        return mapper.categoryEntityListToCategoryDtoList(
+                repository.findAll()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Category> getCategoryById(Long categoryId) {
+        return mapper.toModel(
+                repository.findById(categoryId));
+    }
+
+    @Transactional
+    @Override
+    public Category create(Category category) {
+        return mapper.toModel(
+                repository.save(mapper.toCategoryEntity(category))
+        );
+    }
+    @Transactional
+    @Override
+    public Category update(Long id, Category categoryDto) {
+        Category category = getCategoryById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        category.setName(categoryDto.getName());
+        return mapper.toModel(repository.save(mapper.toCategoryEntity(category)));
+    }
+    @Transactional
+    @Override
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 }

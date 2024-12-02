@@ -1,11 +1,16 @@
 package com.example.cosmocatsmarketplace.dto.product;
 
+import com.example.cosmocatsmarketplace.common.ProductStatus;
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.validation.ExtendedValidation;
 import com.example.cosmocatsmarketplace.validator.ValidSpaceDescription;
 import jakarta.validation.GroupSequence;
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 
@@ -24,6 +29,7 @@ public class ProductCreateDto {
     @NotNull(message = "Price is mandatory")
     @Min(value = 1, message = "Price cannot be 0 or less")
     Integer price;
-    @NotNull(message = "Category is mandatory")
+    @NotNull(message = "Category are mandatory")
     Category category;
+    ProductStatus status;
 }

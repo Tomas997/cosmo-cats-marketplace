@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ class ProductServiceTest {
 
     @Test
     void testGetProductById_ExistingId() {
-        UUID existingId = productService.getAllProducts().get(0).getId();
+        Long existingId = productService.getAllProducts().get(0).getId();
 
         Optional<Product> product = productService.getProductById(existingId);
 
@@ -58,7 +59,7 @@ class ProductServiceTest {
                 .name("New Product")
                 .description("Description of new product")
                 .price(200)
-                .category(Category.builder().id(1L).name("Galaxy cat toy").build())
+                .categories(Set.of(Category.builder().id(1L).name("Galaxy cat toy").build()))
                 .build();
 
 
@@ -77,7 +78,7 @@ class ProductServiceTest {
                 .name("Updated Product")
                 .description("Updated Description")
                 .price(300)
-                .category(Category.builder().id(2L).name("Star cats").build())
+                .categories(Set.of(Category.builder().id(2L).name("Star cats").build()))
                 .build();
 
 

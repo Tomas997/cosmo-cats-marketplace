@@ -4,14 +4,15 @@ import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
 import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
 import com.example.cosmocatsmarketplace.service.CategoryService;
+import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 
 @RestController
@@ -28,8 +29,39 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable long id) {
-        Category category = categoryService.findCategoryById(id);
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         return ResponseEntity.ok(categoryMapper.categoryToCategoryDto(category));
+    }
+
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryDto create(@Valid @RequestBody CategoryDto category) {
+        Category categoryModel = categoryMapper.toModel(category);
+        return categoryMapper.categoryToCategoryDto(
+                categoryService.create(categoryModel)
+        );
+    }
+
+    @PutMapping("/{id}")
+    public CategoryDto update(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryDto category
+    ) {
+        Category categoryModel = categoryMapper.toModel(category);
+        return categoryMapper.categoryToCategoryDto(
+                categoryService.update(id, categoryModel)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        try {
+            categoryService.deleteById(id);
+        } catch (CategoryNotFoundException e) {
+        }
     }
 }

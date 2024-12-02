@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,7 +75,7 @@ class CategoryControllerTestIT {
         Category category = Category.builder().id(1L).name("Galaxy cat toy").build();
         CategoryDto categoryDto = CategoryDto.builder().name("Galaxy cat toy").build();
 
-        when(categoryService.findCategoryById(categoryId)).thenReturn(category);
+        when(categoryService.getCategoryById(categoryId)).thenReturn(Optional.ofNullable(category));
         when(categoryMapper.categoryToCategoryDto(category)).thenReturn(categoryDto);
 
         mockMvc.perform(get("/api/v1/categories/{id}", categoryId)
@@ -86,7 +87,7 @@ class CategoryControllerTestIT {
     @Test
     void testGetCategoryByIdFail() throws Exception {
         long categoryId = 100L;
-        Mockito.when(categoryService.findCategoryById(categoryId)).thenThrow(CategoryNotFoundException.class);
+        Mockito.when(categoryService.getCategoryById(categoryId)).thenThrow(CategoryNotFoundException.class);
 
         mockMvc.perform(get("/api/v1/categories/{id}", categoryId)
                         .contentType(MediaType.APPLICATION_JSON))
