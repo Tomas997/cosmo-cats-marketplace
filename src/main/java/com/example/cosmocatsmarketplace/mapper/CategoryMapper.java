@@ -14,6 +14,7 @@ public interface CategoryMapper {
     List<CategoryDto> categoryListToCategoryDtoList(List<Category> categoryList);
     List<Category> categoryEntityListToCategoryDtoList(List<CategoryEntity> categoryList);
     Category toModel(CategoryEntity categoryList);
+    List<Category> toCategoryList(Iterable<CategoryEntity> categoryEntityList);
     default Optional<Category> toModel(Optional<CategoryEntity> category) {
         return category.map(this::toModel);
     }

@@ -4,15 +4,16 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.util.List;
+import java.util.UUID;
 
 @Value
 @Builder
 public class OrderResponseDto {
-    String id;
+    UUID id;
     String consumerName;
     String address;
     String email;
-    Double totalPrice;
+    double totalPrice;
     String orderStatus;
     List<OrderItemResponseDto> orderItems;
 }
