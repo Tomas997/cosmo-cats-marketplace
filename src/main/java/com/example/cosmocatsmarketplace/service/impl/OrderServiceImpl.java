@@ -1,7 +1,6 @@
 package com.example.cosmocatsmarketplace.service.impl;
 
 import com.example.cosmocatsmarketplace.dto.order.OrderRequestDto;
-import com.example.cosmocatsmarketplace.dto.order.OrderResponseDto;
 import com.example.cosmocatsmarketplace.common.ProductStatus;
 import com.example.cosmocatsmarketplace.domain.Order;
 import com.example.cosmocatsmarketplace.dto.order.OrderItemRequestDto;
@@ -36,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(OrderRequestDto orderRequestDto) {
         try {
             List<OrderItemEntity> orderItems = new ArrayList<>();
-            Double totalPrice = 0.0;
+            Integer totalPrice = 0;
 
             for (OrderItemRequestDto orderItem: orderRequestDto.getOrderItems()) {
                 ProductEntity product = productRepository.findByNaturalId(UUID.fromString(orderItem.getProductId()))

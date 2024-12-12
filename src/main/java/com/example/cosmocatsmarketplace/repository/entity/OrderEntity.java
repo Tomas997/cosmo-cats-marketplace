@@ -17,7 +17,7 @@ public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_id_seq")
     @SequenceGenerator(name = "order_id_seq", sequenceName = "order_id_seq")
-    long id;
+    Long id;
 
     String consumerName;
 
@@ -29,7 +29,7 @@ public class OrderEntity {
     @Column(name = "order_reference", unique = true, nullable = false)
     UUID orderReference;
 
-    Double totalPrice;
+    Integer totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     List<OrderItemEntity> orderItems;

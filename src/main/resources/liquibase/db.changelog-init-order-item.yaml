@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: lab-3-orders-item
+      author: Andriy Plaksenkov
+      changes:
+        - createTable:
+            tableName: order_item
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: INT
+                  constraints:
+                    nullable: false
+        - createSequence:
+            sequenceName: order_item_id_seq
+            incrementBy: 50
+        - addUniqueConstraint:
+            tableName: order_item
+            columnNames: order_id, product_id
+            constraintName: uq_order_product
+        - addForeignKeyConstraint:
+            baseTableName: order_item
+            baseColumnNames: product_id
+            referencedTableName: product
+            referencedColumnNames: id
+            constraintName: fk_order_item_product
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: order_item
+            baseColumnNames: order_id
+            referencedTableName: order
+            referencedColumnNames: id
+            constraintName: fk_order_item_order
+            onDelete: CASCADE

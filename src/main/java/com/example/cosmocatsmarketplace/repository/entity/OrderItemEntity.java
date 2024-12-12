@@ -26,7 +26,7 @@ public class OrderItemEntity {
     @JoinColumn(name = "product_id", nullable = false)
     ProductEntity product;
 
-    Double price;
+    Integer price;
 
     Integer quantity;
 

@@ -1,9 +1,5 @@
 package com.example.cosmocatsmarketplace.domain;
 
-
-import java.util.Set;
-import java.util.UUID;
-
 import com.example.cosmocatsmarketplace.common.ProductStatus;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +8,7 @@ import lombok.Data;
 @Builder
 public class Product {
 
-    private UUID id;
+    private Long id;
     private String name;
     private String description;
     private Integer price;

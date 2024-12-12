@@ -13,8 +13,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-    @Mapping(target = "id", source = "order_reference")
-    @Mapping(target = "orderItems", source = "order_items", qualifiedByName = "toOrderItem")
+    @Mapping(target = "id", source = "orderReference")
+    @Mapping(target = "orderItems", source = "orderItems", qualifiedByName = "toOrderItem")
     Order toOrder(OrderEntity orderEntity);
 
     List<Order> toOrders(List<OrderEntity> orderEntities);
@@ -25,6 +25,6 @@ public interface OrderMapper {
 
     @Named("toOrderItem")
     default OrderItem toOrderItem(OrderItemEntity orderItem) {
-        return new OrderItem(orderItem.getProduct().getTitle(), orderItem.getQuantity(), orderItem.getPrice());
+        return new OrderItem(orderItem.getProduct().getName(), orderItem.getQuantity(), orderItem.getPrice());
     }
 }

@@ -20,11 +20,11 @@ public class ProductEntity {
     @SequenceGenerator(name = "product_id_seq", sequenceName = "product_id_seq")
     Long id;
 
-    String title;
+    String name;
 
     String description;
 
-    Double price;
+    Integer price;
 
     @NaturalId
     @Column(nullable = false, unique = true)

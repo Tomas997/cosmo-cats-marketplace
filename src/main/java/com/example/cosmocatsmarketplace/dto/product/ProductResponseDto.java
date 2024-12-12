@@ -5,14 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 
-
-import java.util.UUID;
-
 @Data
 @Value
 @Builder
 public class ProductResponseDto {
-    UUID id;
+    Long id;
     String name;
     String description;
     Integer price;
