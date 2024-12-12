@@ -4,11 +4,13 @@ import com.example.cosmocatsmarketplace.common.ProductStatus;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @Builder
 public class Product {
 
-    private Long id;
+    private UUID id;
     private String name;
     private String description;
     private Integer price;

@@ -7,6 +7,7 @@ import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.repository.ProductRepository;
 import com.example.cosmocatsmarketplace.repository.entity.CategoryEntity;
+import com.example.cosmocatsmarketplace.repository.entity.ProductEntity;
 import com.example.cosmocatsmarketplace.service.CategoryService;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
@@ -23,15 +24,17 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
 
-
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
-        this.productRepository=productRepository;
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, CategoryService categoryService, CategoryMapper categoryMapper) {
+        this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.categoryService = categoryService;
 
+        this.categoryMapper = categoryMapper;
     }
-
 
 
     @Transactional(readOnly = true)
@@ -50,18 +53,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public Product createProduct(ProductCreateDto productDto) {
-        return productMapper.toModel(productRepository.save(productMapper.toModel(productDto)));
-    }
-
-    @Transactional
-    @Override
-    public Product updateProduct(ProductUpdateDto productDto, UUID id) {
+        CategoryEntity category = categoryMapper.toCategoryEntity(categoryService.getCategoryById(productDto.getCategoryId()));
 
         Product newProduct = Product.builder()
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .price(productDto.getPrice())
-                .category(productDto.getCategory())
+                .category(categoryMapper.toModel(category))
                 .status(productDto.getStatus())
                 .build();
         try {
@@ -70,6 +68,26 @@ public class ProductServiceImpl implements ProductService {
             throw new PersistenceException(e);
         }
     }
+
+    @Transactional
+    @Override
+    public Product updateProduct(ProductUpdateDto productDto, UUID id) {
+        ProductEntity product = productRepository.findByNaturalId(id).orElseThrow(() -> new ProductNotFoundException(id));
+        CategoryEntity category = categoryMapper.toCategoryEntity(categoryService.getCategoryById(productDto.getCategoryId()));
+
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setCategory(category);
+        product.setStatus(productDto.getStatus());
+
+        try {
+            return productMapper.toModel(productRepository.save(product));
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
+    }
+
     @Transactional
     @Override
     public boolean deleteProductById(UUID id) {
@@ -80,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-    return true;
+        return true;
     }
 
 }

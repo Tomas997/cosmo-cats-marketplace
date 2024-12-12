@@ -1,7 +1,6 @@
 package com.example.cosmocatsmarketplace.dto.product;
 
 import com.example.cosmocatsmarketplace.common.ProductStatus;
-import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.validation.ExtendedValidation;
 import com.example.cosmocatsmarketplace.validator.ValidSpaceDescription;
 import jakarta.validation.GroupSequence;
@@ -29,7 +28,7 @@ public class ProductCreateDto {
     @NotNull(message = "Price is mandatory")
     @Min(value = 1, message = "Price cannot be 0 or less")
     Integer price;
-    @NotNull(message = "Category are mandatory")
-    Category category;
+    @NotNull(message = "Category is mandatory")
+    Long categoryId;
     ProductStatus status;
 }

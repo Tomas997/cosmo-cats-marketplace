@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -32,9 +31,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Category> getCategoryById(Long categoryId) {
+    public Category getCategoryById(Long categoryId) {
         return mapper.toModel(
-                repository.findById(categoryId));
+                repository.findById(categoryId)).orElseThrow(() -> new CategoryNotFoundException(categoryId));
     }
 
     @Transactional
@@ -50,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public Category update(Long id, Category categoryDto) {
-        Category category = getCategoryById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        Category category = getCategoryById(id);
         category.setName(categoryDto.getName());
         try {
             return mapper.toModel(repository.save(mapper.toCategoryEntity(category)));
