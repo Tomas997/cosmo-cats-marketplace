@@ -14,6 +14,5 @@ public class OrderResponseDto {
     String address;
     String email;
     double totalPrice;
-    String orderStatus;
     List<OrderItemResponseDto> orderItems;
 }

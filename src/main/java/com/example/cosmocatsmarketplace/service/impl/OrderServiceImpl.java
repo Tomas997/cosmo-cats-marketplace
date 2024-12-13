@@ -4,6 +4,7 @@ import com.example.cosmocatsmarketplace.dto.order.OrderRequestDto;
 import com.example.cosmocatsmarketplace.common.ProductStatus;
 import com.example.cosmocatsmarketplace.domain.Order;
 import com.example.cosmocatsmarketplace.dto.order.OrderItemRequestDto;
+import com.example.cosmocatsmarketplace.dto.order.OrderUpdateDto;
 import com.example.cosmocatsmarketplace.mapper.OrderMapper;
 import com.example.cosmocatsmarketplace.repository.OrderRepository;
 import com.example.cosmocatsmarketplace.repository.ProductRepository;
@@ -51,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(orderItem.getQuantity())
                         .build();
                 orderItems.add(orderItemEntity);
-                totalPrice += orderItemEntity.getPrice();
+                totalPrice += product.getPrice() * orderItem.getQuantity();
             }
 
             OrderEntity order = OrderEntity.builder()
@@ -96,6 +97,22 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllOrders() {
         return orderMapper.toOrders(orderRepository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public Order updateOrder(UUID orderId, OrderUpdateDto orderUpdateDto) {
+        OrderEntity order = orderRepository.findByNaturalId(orderId).orElseThrow(() -> new OrderNotFoundException(orderId.toString()));
+
+        order.setAddress(orderUpdateDto.getAddress());
+        order.setEmail(orderUpdateDto.getEmail());
+        order.setConsumerName(orderUpdateDto.getConsumerName());
+
+        try {
+            return orderMapper.toOrder(orderRepository.save(order));
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
     }
 
 //todo projection
