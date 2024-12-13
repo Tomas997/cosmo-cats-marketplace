@@ -8,6 +8,7 @@ import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import com.example.cosmocatsmarketplace.repository.ProductRepository;
 import com.example.cosmocatsmarketplace.repository.entity.CategoryEntity;
 import com.example.cosmocatsmarketplace.repository.entity.ProductEntity;
+import com.example.cosmocatsmarketplace.repository.projection.ProductDetailsProjection;
 import com.example.cosmocatsmarketplace.service.CategoryService;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
@@ -101,5 +102,10 @@ public class ProductServiceImpl implements ProductService {
         return true;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductDetailsProjection> getProductsByPriceRange(Integer minPrice, Integer maxPrice) {
+        return productRepository.findProductByPriceRange(minPrice, maxPrice);
+    }
 }
 

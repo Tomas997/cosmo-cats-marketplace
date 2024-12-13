@@ -8,6 +8,7 @@ import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
 import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggle;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
+import com.example.cosmocatsmarketplace.repository.projection.ProductDetailsProjection;
 import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import jakarta.validation.Valid;
@@ -59,4 +60,10 @@ public class ProductController {
     public void deleteProductById(@PathVariable UUID id) {
         productService.deleteProductById(id);
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductDetailsProjection>> getProductsByPriceRange(@RequestParam Integer minPrice, @RequestParam Integer maxPrice) {
+        return ResponseEntity.ok(productService.getProductsByPriceRange(minPrice, maxPrice));
+    }
+
 }
