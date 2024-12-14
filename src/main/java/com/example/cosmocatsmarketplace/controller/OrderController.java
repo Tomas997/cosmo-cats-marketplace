@@ -36,7 +36,6 @@ public class OrderController {
         return ResponseEntity.ok(orderMapper.toOrderResponseList(orderService.getAllOrders()));
     }
 
-//todo projection
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable UUID id) {
@@ -44,6 +43,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
+
     public void deleteOrder(@PathVariable UUID id) {
         orderService.deleteOrder(id);
     }

@@ -1,9 +1,9 @@
 package com.example.cosmocatsmarketplace.service.impl;
 
-import com.example.cosmocatsmarketplace.dto.order.OrderRequestDto;
 import com.example.cosmocatsmarketplace.common.ProductStatus;
 import com.example.cosmocatsmarketplace.domain.Order;
 import com.example.cosmocatsmarketplace.dto.order.OrderItemRequestDto;
+import com.example.cosmocatsmarketplace.dto.order.OrderRequestDto;
 import com.example.cosmocatsmarketplace.dto.order.OrderUpdateDto;
 import com.example.cosmocatsmarketplace.mapper.OrderMapper;
 import com.example.cosmocatsmarketplace.repository.OrderRepository;
@@ -84,7 +84,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void deleteOrder(UUID orderId) {
-        getOrderById(orderId);
+        try {
+            getOrderById(orderId);
+        } catch (Exception e) {
+
+        }
+
 
         try {
             orderRepository.deleteByNaturalId(orderId);
@@ -115,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-//todo projection
 
 
 }
