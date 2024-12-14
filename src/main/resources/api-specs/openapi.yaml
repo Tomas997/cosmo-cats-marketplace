@@ -63,6 +63,120 @@ paths:
       responses:
         '204':
           description: No Content
+  /api/v1/orders/{id}:
+    get:
+      tags:
+        - order-controller
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDto'
+    put:
+      tags:
+        - order-controller
+      operationId: updateOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdateDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDto'
+    delete:
+      tags:
+        - order-controller
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/categories/{id}:
+    get:
+      tags:
+        - category-controller
+      operationId: getCategoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CategoryResponseDto'
+    put:
+      tags:
+        - category-controller
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CategoryResponseDto'
+    delete:
+      tags:
+        - category-controller
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No Content
   /api/v1/products:
     get:
       tags:
@@ -94,6 +208,95 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProductResponseDto'
+  /api/v1/orders:
+    get:
+      tags:
+        - order-controller
+      operationId: getAllOrders
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponseDto'
+    post:
+      tags:
+        - order-controller
+      operationId: createOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderResponseDto'
+  /api/v1/categories:
+    get:
+      tags:
+        - category-controller
+      operationId: getAllCategories
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryResponseDto'
+    post:
+      tags:
+        - category-controller
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryDto'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CategoryResponseDto'
+  /api/v1/products/filter:
+    get:
+      tags:
+        - product-controller
+      operationId: getProductsByPriceRange
+      parameters:
+        - name: minPrice
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: maxPrice
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductDetailsProjection'
   /api/v1/cosmo-cats:
     get:
       tags:
@@ -108,52 +311,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CosmoCatDto'
-  /api/v1/categories:
-    get:
-      tags:
-        - category-controller
-      operationId: getAllCategories
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CategoryDto'
-  /api/v1/categories/{id}:
-    get:
-      tags:
-        - category-controller
-      operationId: getCategoryById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/CategoryDto'
 components:
   schemas:
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
     ProductUpdateDto:
       required:
-        - category
+        - categoryId
         - description
         - name
         - price
@@ -171,8 +333,24 @@ components:
           minimum: 1
           type: integer
           format: int32
-        category:
-          $ref: '#/components/schemas/Category'
+        categoryId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - IN_STOCK
+            - OUT_OF_STOCK
+            - DISCONTINUED
+    CategoryDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 100
+          minLength: 0
+          type: string
     ProductResponseDto:
       type: object
       properties:
@@ -186,11 +364,67 @@ components:
         price:
           type: integer
           format: int32
+        status:
+          type: string
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: '#/components/schemas/CategoryDto'
+    OrderUpdateDto:
+      required:
+        - address
+        - consumerName
+      type: object
+      properties:
+        address:
+          maxLength: 255
+          minLength: 0
+          type: string
+        email:
+          type: string
+        consumerName:
+          maxLength: 100
+          minLength: 0
+          type: string
+    OrderItemResponseDto:
+      type: object
+      properties:
+        productTitle:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+          format: int32
+    OrderResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        consumerName:
+          type: string
+        address:
+          type: string
+        email:
+          type: string
+        totalPrice:
+          type: number
+          format: double
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponseDto'
+    CategoryResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
     ProductCreateDto:
       required:
-        - category
+        - categoryId
         - description
         - name
         - price
@@ -208,8 +442,57 @@ components:
           minimum: 1
           type: integer
           format: int32
-        category:
-          $ref: '#/components/schemas/Category'
+        categoryId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - IN_STOCK
+            - OUT_OF_STOCK
+            - DISCONTINUED
+    OrderItemRequestDto:
+      required:
+        - productId
+        - quantity
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+    OrderRequestDto:
+      required:
+        - address
+        - consumerName
+        - orderItems
+      type: object
+      properties:
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemRequestDto'
+        address:
+          maxLength: 255
+          minLength: 0
+          type: string
+        email:
+          type: string
+        consumerName:
+          maxLength: 100
+          minLength: 0
+          type: string
+    ProductDetailsProjection:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
     CosmoCatDto:
       type: object
       properties:
@@ -220,13 +503,3 @@ components:
           type: string
         email:
           type: string
-    CategoryDto:
-      required:
-        - name
-      type: object
-      properties:
-        name:
-          maxLength: 100
-          minLength: 0
-          type: string
-

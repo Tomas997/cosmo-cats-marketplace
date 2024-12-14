@@ -37,7 +37,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: INTEGER
+                  type: VARCHAR(32)
                   constraints:
                     nullable: false
 

@@ -1,185 +1,200 @@
 package com.example.cosmocatsmarketplace.controller;
 
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.example.cosmocatsmarketplace.domain.Category;
-import com.example.cosmocatsmarketplace.domain.Product;
+import com.example.cosmocatsmarketplace.AbstractIt;
+import com.example.cosmocatsmarketplace.common.ProductStatus;
 import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
-import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
-import com.example.cosmocatsmarketplace.featuretoggle.FeatureToggles;
-import com.example.cosmocatsmarketplace.featuretoggle.annotation.DisabledFeatureToggle;
-import com.example.cosmocatsmarketplace.featuretoggle.annotation.EnabledFeatureToggle;
-import com.example.cosmocatsmarketplace.mapper.ProductMapper;
+import com.example.cosmocatsmarketplace.repository.CategoryRepository;
+import com.example.cosmocatsmarketplace.repository.ProductRepository;
+import com.example.cosmocatsmarketplace.repository.entity.CategoryEntity;
+import com.example.cosmocatsmarketplace.repository.entity.ProductEntity;
 import com.example.cosmocatsmarketplace.service.ProductService;
-import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.UUID;
 
-import java.util.*;
-
-@WebMvcTest(ProductController.class)
-class ProductControllerTestIT {
-
+//@WebMvcTest(ProductController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+class ProductControllerTestIT extends AbstractIt {
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private ProductService productService;
-
-    @MockBean
-    private ProductMapper productMapper;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private CategoryRepository categoryRepository;
+
+    @SpyBean
+    private ProductService productService;
+
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        Mockito.reset(productService);
+        productRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     @Test
-    void testGetAllProducts() throws Exception {
-        List<Product> products = Arrays.asList(
+    void testGetAllProduct() throws Exception {
+        createProduct();
 
-                Product.builder().id(UUID.randomUUID()).name("Product 1").description("Description 1").price(100).categories(Set.of(Category.builder().id(1L).name("Category 1").build())).build(),
-                Product.builder().id(UUID.randomUUID()).name("Product 2").description("Description 2").price(200).categories(Set.of(Category.builder().id(2L).name("Category 2").build())).build()
-        );
-
-        List<ProductResponseDto> productResponseDtos = Arrays.asList(
-                ProductResponseDto.builder().id(products.get(0).getId()).name("Product 1").description("Description 1").price(100).categories(products.get(0).getCategories()).build(),
-                ProductResponseDto.builder().id(products.get(1).getId()).name("Product 2").description("Description 2").price(200).categories(products.get(1).getCategories()).build()
-        );
-
-        when(productService.getAllProducts()).thenReturn(products);
-        when(productMapper.toProductResponseDto(products.get(0))).thenReturn(productResponseDtos.get(0));
-        when(productMapper.toProductResponseDto(products.get(1))).thenReturn(productResponseDtos.get(1));
-
-        mockMvc.perform(get("/api/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Product 1"))
-                .andExpect(jsonPath("$[1].name").value("Product 2"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     void testGetProductById() throws Exception {
-        UUID productId = UUID.randomUUID();
+        ProductEntity product = createProduct();
 
-        Product product = Product.builder().id(productId).name("Product 1").description("Description 1").price(100).categories(Set.of(Category.builder().id(1L).name("Category 1").build())).build();
-        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(productId).name("Product 1").description("Description 1").price(100).categories(product.getCategories()).build();
-
-
-                when(productService.getProductById(productId)).thenReturn(Optional.of(product));
-        when(productMapper.toProductResponseDto(product)).thenReturn(productResponseDto);
-
-        mockMvc.perform(get("/api/v1/products/{id}", productId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Product 1"))
-                .andExpect(jsonPath("$.price").value(100));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/" + product.getProductReference()))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void testCreateProduct() throws Exception {
-        ProductCreateDto productCreateDto = ProductCreateDto.builder().name("New Product").description("planet thing").price(150).categories(Set.of(Category.builder().id(1L).name("Category 1").build())).build();
-        Product product = Product.builder().id(UUID.randomUUID()).name("New Product").description("planet thing").price(150).categories(Set.of(Category.builder().id(1L).name("Category 1").build())).build();
-        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(product.getId()).name("New Product").description("planet thing").price(150).categories(product.getCategories()).build();
-
-        when(productService.createProduct(productCreateDto)).thenReturn(product);
-        when(productMapper.toProductResponseDto(product)).thenReturn(productResponseDto);
-
-        mockMvc.perform(post("/api/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(productCreateDto)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("New Product"))  // Change here
-                .andExpect(jsonPath("$.price").value(150));
-    }
-
-
-    @Test
-    void testUpdateProduct() throws Exception {
-        UUID productId = UUID.randomUUID();
-
-        ProductUpdateDto productUpdateDto = ProductUpdateDto.builder().name("Updated Product").description("planet thing").price(200).categories(Set.of(Category.builder().id(2L).name("Category 2").build())).build();
-        Product updatedProduct = Product.builder().id(productId).name("Updated Product").description("planet thing").price(200).categories(Set.of(Category.builder().id(2L).name("Category 2").build())).build();
-        ProductResponseDto productResponseDto=ProductResponseDto.builder().id(productId).name("Updated Product").description("planet thing").price(200).categories(updatedProduct.getCategories()).build();
-
-        when(productService.updateProduct(productUpdateDto, productId)).thenReturn(updatedProduct);
-        when(productMapper.toProductResponseDto(updatedProduct)).thenReturn(productResponseDto);
-
-        mockMvc.perform(put("/api/v1/products/{id}", productId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(productUpdateDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Updated Product"))
-                .andExpect(jsonPath("$.price").value(200));
-    }
-
-    @Test
-    void testDeleteProductById() throws Exception {
-        UUID productId = UUID.randomUUID();
-
-        when(productService.deleteProductById(productId)).thenReturn(true);
-
-        mockMvc.perform(delete("/api/v1/products/{id}", productId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void testGetProductByIdFail() throws Exception {
-        UUID productID = UUID.randomUUID();
-        Mockito.when(productService.getProductById(productID)).thenThrow(ProductNotFoundException.class);
-
-        mockMvc.perform(get("/api/v1/products/{id}", productID)
-                        .contentType(MediaType.APPLICATION_JSON))
+    void testGetProductByIdNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/" + UUID.randomUUID()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    void testCreateProductFail() throws Exception {
-        ProductCreateDto productCreateDto = ProductCreateDto.builder().name("Galactic Star Crystal").description( "A rare star crystal found on the surface of Mars.").price(-150).categories(Set.of(Category.builder().id(1L).name( "Galaxy cat toy").build())).build();
+    void testCreateProduct() throws Exception {
+        CategoryEntity categoryEntity = createCategory();
 
-        mockMvc.perform(post("/api/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(productCreateDto))) // Serialize the object
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(productCreateDto(categoryEntity.getId()))))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    void testCreateProductFailed() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
+                        .contentType("application/json")
+                        .content("{}"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
-    @DisabledFeatureToggle(FeatureToggles.KITTY_PRODUCTS)
-    void shouldGet404ForGetProductById() throws Exception {
-        UUID id = UUID.randomUUID();
-        mockMvc.perform(get("/api/v1/products/{id}", id))
-                .andExpect(status().isNotFound());
+    void testUpdateProduct() throws Exception {
+        ProductEntity product = createProduct();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/" + product.getProductReference())
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(productUpdateDto(product.getCategory().getId()))))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @EnabledFeatureToggle(FeatureToggles.KITTY_PRODUCTS)
-    void shouldGet200ForGetProductById() throws Exception {
-        Product product = Product.builder().id(UUID.randomUUID()).name("Product 1").description("Description 1").price(100).categories(Set.of(Category.builder().id(1L).name("Category 1").build())).build();
+    void testUpdateProductFailed() throws Exception {
+        ProductEntity product = createProduct();
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/" + product.getProductReference())
+                .contentType("application/json")
+                .content("{}")).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
-        UUID id = product.getId();
-        when(productService.getProductById(id)).thenReturn(Optional.of(product));
+    @Test
+    void testUpdateProductNotFound() throws Exception {
+        CategoryEntity category = createCategory();
+        ProductUpdateDto productUpdateDto = productUpdateDto(category.getId());
 
-        mockMvc.perform(get("/api/v1/products/{id}", id))
-                .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/products/" + UUID.randomUUID())
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(productUpdateDto)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void testGetProductByPriceRange() throws Exception {
+        createProduct();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/filter")
+                        .param("minPrice", String.valueOf(10))
+                        .param("maxPrice", String.valueOf(20))
+                        .contentType("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void testGetProductByPriceRangeFailed() throws Exception {
+        createProduct();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/filter")
+                        .contentType("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
+    @Test
+    void testDeleteProduct() throws Exception {
+        ProductEntity product = productRepository.save(ProductEntity.builder()
+                .name("Test Product for deleting galaxy")
+                .price(15)
+                .productReference(UUID.randomUUID())
+                .description("Test product description")
+                .status(ProductStatus.IN_STOCK)
+                .category(createCategory())
+                .build());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/products/" + product.getProductReference()))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void testDeleteProductNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/products/" + UUID.fromString("37e0d1a8-a692-450e-81c6-29e8f56e8a6e")))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    private CategoryEntity createCategory() {
+        return  categoryRepository.save(CategoryEntity.builder()
+                .name("Test Category for product")
+                .build());
+    }
+
+    private ProductEntity createProduct() {
+        return productRepository.save(ProductEntity.builder()
+                .name("Test Product galaxy")
+                .price(15)
+                .productReference(UUID.fromString("37e0d1a8-a692-450e-81c6-29e8f56e8a6a"))
+                .description("Test product description star")
+                .status(ProductStatus.IN_STOCK)
+                .category(createCategory())
+                .build());
+    }
+
+    private ProductCreateDto productCreateDto(long categoryId) {
+        return ProductCreateDto.builder()
+                .name("Product from productCreateDto")
+                .description("Product Description star")
+                .categoryId(categoryId)
+                .price(14)
+                .status(ProductStatus.IN_STOCK)
+                .build();
+    }
+    private ProductUpdateDto productUpdateDto(long categoryId) {
+        return ProductUpdateDto.builder()
+                .name("Product from productUpdateDto")
+                .description("Product Description star")
+                .categoryId(categoryId)
+                .price(14)
+                .status(ProductStatus.IN_STOCK)
+                .build();
     }
 }

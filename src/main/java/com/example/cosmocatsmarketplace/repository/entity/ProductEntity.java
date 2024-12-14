@@ -34,6 +34,6 @@ public class ProductEntity {
     @JoinColumn(nullable = false, name = "category_id")
     CategoryEntity category;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     ProductStatus status;
 }

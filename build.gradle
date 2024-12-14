@@ -58,12 +58,9 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
-//    liquibaseRuntime 'org.liquibase:liquibase-core:4.24.0'
-//    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
-//    liquibaseRuntime 'info.picocli:picocli:4.7.5'
-//    liquibaseRuntime 'org.yaml:snakeyaml:1.33'
-//    liquibaseRuntime 'org.postgresql:postgresql:42.7.4'
-
+    testImplementation 'org.testcontainers:testcontainers:1.19.0'
+    testImplementation 'org.testcontainers:postgresql:1.19.0'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 }
 
 //apply plugin: "org.liquibase.gradle"

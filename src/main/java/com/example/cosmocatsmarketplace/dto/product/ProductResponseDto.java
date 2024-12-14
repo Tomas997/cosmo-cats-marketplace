@@ -1,6 +1,6 @@
 package com.example.cosmocatsmarketplace.dto.product;
 
-import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
+import com.example.cosmocatsmarketplace.dto.category.CategoryResponseDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
@@ -16,5 +16,5 @@ public class ProductResponseDto {
     String description;
     Integer price;
     String status;
-    CategoryDto category;
+    CategoryResponseDto category;
 }
