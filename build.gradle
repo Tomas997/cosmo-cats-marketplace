@@ -3,7 +3,6 @@ plugins {
     id 'org.springframework.boot' version '3.3.5'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'org.barfuin.gradle.jacocolog' version '3.1.0'
-//    id 'org.liquibase.gradle' version '2.2.0'
 }
 
 group = 'com.example'
@@ -63,34 +62,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 }
 
-//apply plugin: "org.liquibase.gradle"
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-//liquibase {
-//    activities {
-//        main {
-//            changelogFile "src/main/resources/db/changelog/db.changelog.yaml"
-//            url "postgresql://localhost:5432/web_cosmocats"
-//            username "postgres"
-//            password "Andriy"
-//        }
-//    }
-//    runList = 'main'
-//}
-//
-//task('deploy changeLog') {
-//    doFirst() {
-//        liquibase {
-//            activities {
-//                main {
-//                    changeLogFile System.properties.liquibaseChangeLogFile
-//                    contexts System.properties.liquibaseContexts
-//                }
-//            }
-//        }
-//    }
-//}
-//update.dependsOn('deploy changeLog')
