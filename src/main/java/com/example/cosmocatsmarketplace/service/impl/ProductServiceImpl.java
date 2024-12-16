@@ -14,6 +14,7 @@ import com.example.cosmocatsmarketplace.service.ProductService;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
 import jakarta.persistence.PersistenceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toModel(productRepository.findByNaturalId(productId));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Product createProduct(ProductCreateDto productDto) {
         CategoryEntity category = categoryMapper.toCategoryEntity(categoryService.getCategoryById(productDto.getCategoryId()));

@@ -7,6 +7,7 @@ import com.example.cosmocatsmarketplace.service.CategoryService;
 import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
 import jakarta.persistence.PersistenceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
                 repository.findById(categoryId)).orElseThrow(() -> new CategoryNotFoundException(categoryId));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Category create(Category category) {
         try {

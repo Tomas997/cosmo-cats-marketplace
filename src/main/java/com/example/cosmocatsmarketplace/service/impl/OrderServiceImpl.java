@@ -18,6 +18,7 @@ import com.example.cosmocatsmarketplace.service.exeption.ProductStatusIsInCorrec
 import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final ProductRepository productRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Order createOrder(OrderRequestDto orderRequestDto) {
         try {
