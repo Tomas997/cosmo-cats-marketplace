@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: cosmocatsmarketplace
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8083/.well-known/jwks.json
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}
+            scope: user:email
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            authorization-grant-type: authorization_code
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/web_cosmocats
+    username: postgres
+    password: Andriy
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:liquibase/changelog.yaml
+    enabled: true
+
+application:
+  feature:
+    toggles:
+      cosmoCats: true
+      kittyProducts: true

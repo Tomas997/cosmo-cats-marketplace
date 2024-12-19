@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -56,6 +57,7 @@ class OrderControllerIT {
         orderRepository.deleteAll();
     }
 
+    @WithMockUser
     @Test
     void testCreateOrder() throws Exception {
         ProductEntity productEntity = productEntity();
@@ -67,6 +69,7 @@ class OrderControllerIT {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser()
     @Test
     void testCreateOrderProductNotFound() throws Exception {
         OrderRequestDto orderRequestDto = orderRequestDto(UUID.randomUUID().toString());
@@ -77,6 +80,7 @@ class OrderControllerIT {
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());
     }
 
+    @WithMockUser
     @Test
     void shouldCreateOrderFailed() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/orders")
@@ -84,6 +88,7 @@ class OrderControllerIT {
                 .content("{}")).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testGetAllOrders() throws Exception {
         ProductEntity product = productEntity();
@@ -94,7 +99,7 @@ class OrderControllerIT {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-
+    @WithMockUser
     @Test
     void testDeleteOrder() throws Exception {
         ProductEntity product = productEntity();
@@ -105,9 +110,10 @@ class OrderControllerIT {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser()
     @Test
     void testDeleteOrderNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/orders/" + UUID.randomUUID().toString()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/orders/" + UUID.randomUUID()))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
