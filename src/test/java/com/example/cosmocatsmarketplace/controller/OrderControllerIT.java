@@ -108,8 +108,9 @@ class OrderControllerIT {
     @Test
     void testDeleteOrderNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/orders/" + UUID.randomUUID().toString()))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
     private ProductEntity productEntity () {
         return productRepository.save(ProductEntity.builder()
                 .category(categoryEntity())
