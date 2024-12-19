@@ -25,21 +25,37 @@ class CategoryServiceTest {
     }
 
     @Test
-    void testFindCategoryById_ExistingId() {
+    void testGetCategoryById_ExistingId() {
         long categoryId = 1L;
 
-        Category category = categoryService.findCategoryById(categoryId);
+        // Повертаємо категорію з сервісу
+        Category category = categoryService.getCategoryById(categoryId);
 
+        // Перевіряємо, що категорія не null
         assertNotNull(category, "Category should not be null");
+
+        // Перевіряємо правильність значень
         assertEquals(categoryId, category.getId(), "Category ID should match");
         assertEquals("Galaxy cat toy", category.getName(), "Category name should match");
     }
 
     @Test
-    void testFindCategoryById_NonExistingId() {
+    void testGetCategoryById_CategoryNotFound() {
+        long categoryId = 999L; // Неіснуючий ID
+
+        // Перевіряємо, що при спробі отримати категорію з неіснуючим ID кидається виключення
+        assertThrows(CategoryNotFoundException.class, () -> {
+            categoryService.getCategoryById(categoryId);
+        }, "CategoryNotFoundException should be thrown when category does not exist");
+    }
+
+
+
+    @Test
+    void testGetCategoryById_NonExistingId() {
         long nonExistingId = 99L;
 
-        assertThrows(CategoryNotFoundException.class, () -> categoryService.findCategoryById(nonExistingId),
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.getCategoryById(nonExistingId),
                 "CategoryNotFoundException should be thrown for non-existing ID");
     }
 }

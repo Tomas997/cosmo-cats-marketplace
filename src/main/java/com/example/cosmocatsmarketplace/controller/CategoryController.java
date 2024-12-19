@@ -2,14 +2,14 @@ package com.example.cosmocatsmarketplace.controller;
 
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.dto.category.CategoryDto;
+import com.example.cosmocatsmarketplace.dto.category.CategoryResponseDto;
 import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
 import com.example.cosmocatsmarketplace.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,14 +22,42 @@ public class CategoryController {
     private final CategoryMapper categoryMapper;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
         List<Category> categories = categoryService.findAllCategories();
-        return ResponseEntity.ok(categoryMapper.categoryListToCategoryDtoList(categories));
+        return ResponseEntity.ok(categoryMapper.categoryListToCategoryResponseDto(categories));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable long id) {
-        Category category = categoryService.findCategoryById(id);
-        return ResponseEntity.ok(categoryMapper.categoryToCategoryDto(category));
+    public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
+        Category category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(categoryMapper.categoryToCategoryResponseDto(category));
+    }
+
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponseDto create(@Valid @RequestBody CategoryDto category) {
+        Category categoryModel = categoryMapper.toModel(category);
+        return categoryMapper.categoryToCategoryResponseDto(
+                categoryService.create(categoryModel)
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
+    public CategoryResponseDto update(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryDto category
+    ) {
+        Category categoryModel = categoryMapper.toModel(category);
+        return categoryMapper.categoryToCategoryResponseDto(
+                categoryService.update(id, categoryModel)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        categoryService.deleteById(id);
     }
 }

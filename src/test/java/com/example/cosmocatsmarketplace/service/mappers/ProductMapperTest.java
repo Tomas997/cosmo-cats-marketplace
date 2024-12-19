@@ -1,20 +1,22 @@
 package com.example.cosmocatsmarketplace.service.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.domain.Product;
 import com.example.cosmocatsmarketplace.dto.product.ProductResponseDto;
+import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
 import com.example.cosmocatsmarketplace.mapper.ProductMapper;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 class ProductMapperTest {
 
     private final ProductMapper productMapper = Mappers.getMapper(ProductMapper.class);
+    private final CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
 
     @Test
     void testToProductResponseDto() {
@@ -35,6 +37,6 @@ class ProductMapperTest {
         assertEquals(product.getName(), productResponseDto.getName(), "Name should match");
         assertEquals(product.getDescription(), productResponseDto.getDescription(), "Description should match");
         assertEquals(product.getPrice(), productResponseDto.getPrice(), "Price should match");
-        assertEquals(product.getCategory(), productResponseDto.getCategory(), "Category should match");
+        assertEquals(product.getCategory(), categoryMapper.toModel(productResponseDto.getCategory()), "Category should match");
     }
 }

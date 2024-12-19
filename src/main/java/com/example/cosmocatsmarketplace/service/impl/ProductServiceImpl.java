@@ -1,104 +1,112 @@
 package com.example.cosmocatsmarketplace.service.impl;
 
-import com.example.cosmocatsmarketplace.domain.Category;
 import com.example.cosmocatsmarketplace.domain.Product;
 import com.example.cosmocatsmarketplace.dto.product.ProductCreateDto;
 import com.example.cosmocatsmarketplace.dto.product.ProductUpdateDto;
+import com.example.cosmocatsmarketplace.mapper.CategoryMapper;
+import com.example.cosmocatsmarketplace.mapper.ProductMapper;
+import com.example.cosmocatsmarketplace.repository.ProductRepository;
+import com.example.cosmocatsmarketplace.repository.entity.CategoryEntity;
+import com.example.cosmocatsmarketplace.repository.entity.ProductEntity;
+import com.example.cosmocatsmarketplace.repository.projection.ProductDetailsProjection;
 import com.example.cosmocatsmarketplace.service.CategoryService;
 import com.example.cosmocatsmarketplace.service.ProductService;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
+import jakarta.persistence.PersistenceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
     private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
-    private final List<Product> productList = new ArrayList<>();
 
-    public ProductServiceImpl(CategoryService categoryService) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, CategoryService categoryService, CategoryMapper categoryMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
         this.categoryService = categoryService;
-        initializeProductList();
-    }
 
-    private void initializeProductList() {
-        productList.add(Product.builder()
-                .id(UUID.randomUUID())
-                .name("Galactic Star Crystal")
-                .description("A rare star crystal found on the surface of Mars.")
-                .price(299)
-                .category(categoryService.findCategoryById(1))
-                .build());
-        productList.add(Product.builder()
-                .id(UUID.randomUUID())
-                .name("Zero-Gravity Galaxy Boots")
-                .description("Advanced boots designed for optimal movement in galaxy environments.")
-                .price(149)
-                .category(categoryService.findCategoryById(2))
-                .build());
-        productList.add(Product.builder()
-                .id(UUID.randomUUID())
-                .name("Lunar Comet Dust Sample")
-                .description("Collected from the surface of the Moon, this comet dust sample is highly sought by collectors.")
-                .price(499)
-                .category(categoryService.findCategoryById(3))
-                .build());
+        this.categoryMapper = categoryMapper;
     }
 
 
-
+    @Transactional(readOnly = true)
     @Override
     public List<Product> getAllProducts() {
-        return productList;
+        return productMapper.toModel(productRepository.findAll());
     }
 
+
+    @Transactional(readOnly = true)
     @Override
     public Optional<Product> getProductById(UUID productId) {
-        return productList.stream()
-                .filter(product -> product.getId().equals(productId))
-                .findFirst();
+        return productMapper.toModel(productRepository.findByNaturalId(productId));
     }
 
-
+    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Product createProduct(ProductCreateDto productDto) {
-        Category category = categoryService.findCategoryById(productDto.getCategory().getId());
+        CategoryEntity category = categoryMapper.toCategoryEntity(categoryService.getCategoryById(productDto.getCategoryId()));
 
-        Product product = Product.builder()
-                .id(UUID.randomUUID())
+        Product newProduct = Product.builder()
                 .name(productDto.getName())
                 .description(productDto.getDescription())
                 .price(productDto.getPrice())
-                .category(category)
+                .category(categoryMapper.toModel(category))
+                .status(productDto.getStatus())
                 .build();
-        productList.add(product);
-        return product;
+        try {
+            return productMapper.toModel(productRepository.save(productMapper.toProductEntity(newProduct)));
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
     }
 
+    @Transactional
     @Override
     public Product updateProduct(ProductUpdateDto productDto, UUID id) {
-        Product product = getProductById(id).orElseThrow(() -> new ProductNotFoundException(id));
+        ProductEntity product = productRepository.findByNaturalId(id).orElseThrow(() -> new ProductNotFoundException(id));
+        CategoryEntity category = categoryMapper.toCategoryEntity(categoryService.getCategoryById(productDto.getCategoryId()));
 
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
-        product.setCategory(productDto.getCategory());
-        return product;
+        product.setCategory(category);
+        product.setStatus(productDto.getStatus());
+
+        try {
+            return productMapper.toModel(productRepository.save(product));
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteProductById(UUID id) {
+        getProductById(id);
+
+        try {
+            productRepository.deleteByNaturalId(id);
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
+        return true;
     }
 
     @Override
-    public boolean deleteProductById(UUID id) {
-        Optional<Product> productById = getProductById(id);
-        productById.ifPresent(productList::remove);
-        return productById.isPresent();
+    @Transactional(readOnly = true)
+    public List<ProductDetailsProjection> getProductsByPriceRange(Integer minPrice, Integer maxPrice) {
+        return productRepository.findProductByPriceRange(minPrice, maxPrice);
     }
-
 }
 

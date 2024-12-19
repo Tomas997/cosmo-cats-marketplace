@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: lab-3-orders
+      author: Andriy Plaksenkov
+      changes:
+        - createTable:
+            tableName: order
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: consumer_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_reference
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: INT
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            sequenceName: order_id_seq
+            incrementBy: 50
+        - addUniqueConstraint:
+            tableName: order
+            columnNames: order_reference
+            constraintName: uq_order_reference

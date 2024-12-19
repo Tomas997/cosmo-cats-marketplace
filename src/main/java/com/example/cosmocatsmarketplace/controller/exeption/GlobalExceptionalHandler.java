@@ -3,11 +3,11 @@ package com.example.cosmocatsmarketplace.controller.exeption;
 import com.example.cosmocatsmarketplace.dto.ConstraintViolationProblemDetails;
 import com.example.cosmocatsmarketplace.featuretoggle.exeption.FeatureToggleNotEnabledException;
 import com.example.cosmocatsmarketplace.service.exeption.CategoryNotFoundException;
+import com.example.cosmocatsmarketplace.service.exeption.OrderNotFoundException;
 import com.example.cosmocatsmarketplace.service.exeption.ProductNotFoundException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import com.example.cosmocatsmarketplace.service.exeption.ProductStatusIsInCorrectException;
+import jakarta.persistence.PersistenceException;
+import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -56,6 +56,30 @@ public class GlobalExceptionalHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = forStatusAndDetail(NOT_FOUND, ex.getMessage());
         problemDetail.setType(create("feature-disabled"));
         problemDetail.setTitle("Feature is disabled");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ProblemDetail handleOrderNotFoundException(OrderNotFoundException ex) {
+        ProblemDetail problemDetail = forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setType(URI.create("order-not-found"));
+        problemDetail.setTitle("Order Not Found");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ProductStatusIsInCorrectException.class)
+    public ProblemDetail handleProductStatusException(ProductStatusIsInCorrectException ex) {
+        ProblemDetail problemDetail = forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setType(URI.create("product-status-incorrect"));
+        problemDetail.setTitle("Product Status Incorrect");
+        return problemDetail;
+    }
+
+    @ExceptionHandler(PersistenceException.class)
+    public ProblemDetail handlePersistenceException(PersistenceException ex) {
+        ProblemDetail problemDetail = forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        problemDetail.setType(URI.create("persistence-error"));
+        problemDetail.setTitle("Persistence Error");
         return problemDetail;
     }
 }
