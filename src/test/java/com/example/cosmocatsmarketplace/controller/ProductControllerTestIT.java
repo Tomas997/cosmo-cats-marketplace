@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -51,6 +52,7 @@ class ProductControllerTestIT extends AbstractIt {
         categoryRepository.deleteAll();
     }
 
+    @WithMockUser
     @Test
     void testGetAllProduct() throws Exception {
         createProduct();
@@ -59,6 +61,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser
     @Test
     void testGetProductById() throws Exception {
         ProductEntity product = createProduct();
@@ -67,12 +70,14 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser
     @Test
     void testGetProductByIdNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/products/" + UUID.randomUUID()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testCreateProduct() throws Exception {
         CategoryEntity categoryEntity = createCategory();
@@ -83,6 +88,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
+    @WithMockUser
     @Test
     void testCreateProductFailed() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
@@ -91,6 +97,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testUpdateProduct() throws Exception {
         ProductEntity product = createProduct();
@@ -101,6 +108,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser
     @Test
     void testUpdateProductFailed() throws Exception {
         ProductEntity product = createProduct();
@@ -109,6 +117,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .content("{}")).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testUpdateProductNotFound() throws Exception {
         CategoryEntity category = createCategory();
@@ -120,6 +129,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @WithMockUser
     @Test
     void testGetProductByPriceRange() throws Exception {
         createProduct();
@@ -131,6 +141,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser
     @Test
     void testGetProductByPriceRangeFailed() throws Exception {
         createProduct();
@@ -141,6 +152,7 @@ class ProductControllerTestIT extends AbstractIt {
     }
 
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testDeleteProduct() throws Exception {
         ProductEntity product = productRepository.save(ProductEntity.builder()
@@ -156,6 +168,7 @@ class ProductControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testDeleteProductNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/products/" + UUID.fromString("37e0d1a8-a692-450e-81c6-29e8f56e8a6e")))

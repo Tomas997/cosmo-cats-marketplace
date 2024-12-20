@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryMapper.categoryToCategoryResponseDto(category));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponseDto create(@Valid @RequestBody CategoryDto category) {
@@ -43,6 +44,7 @@ public class CategoryController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
     public CategoryResponseDto update(
@@ -55,6 +57,7 @@ public class CategoryController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

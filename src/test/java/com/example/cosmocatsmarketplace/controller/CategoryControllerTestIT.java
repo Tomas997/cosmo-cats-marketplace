@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -40,13 +41,14 @@ class CategoryControllerTestIT extends AbstractIt {
         categoryRepository.deleteAll();
     }
 
-
+    @WithMockUser
     @Test
     void testGetAllCategories() throws Exception {
         saveCategoryEntity();
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/categories")).andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @WithMockUser
     @Test
     void testGetCategoryById() throws Exception {
         CategoryEntity category = saveCategoryEntity();
@@ -54,11 +56,13 @@ class CategoryControllerTestIT extends AbstractIt {
 
     }
 
+    @WithMockUser
     @Test
     void testGetCategoryByIdFail() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/categories/" + 1L)).andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testCreateCategory() throws Exception {
         CategoryDto categoryDto = createCategoryDto();
@@ -70,6 +74,7 @@ class CategoryControllerTestIT extends AbstractIt {
         response.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testCreateCategoryFailed() throws Exception {
         ResultActions response = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/categories")
@@ -79,6 +84,7 @@ class CategoryControllerTestIT extends AbstractIt {
         response.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testUpdateCategory() throws Exception {
         CategoryEntity categoryEntity = saveCategoryEntity();
@@ -89,6 +95,8 @@ class CategoryControllerTestIT extends AbstractIt {
 
         response.andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testUpdateCategoryFailed() throws Exception {
         CategoryEntity categoryEntity = saveCategoryEntity();
@@ -99,6 +107,7 @@ class CategoryControllerTestIT extends AbstractIt {
         response.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testNotFoundUpdateCategory() throws Exception {
         CategoryDto categoryDto = createCategoryDto();
@@ -108,6 +117,7 @@ class CategoryControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testDeleteCategory() throws Exception {
         CategoryEntity categoryEntity = saveCategoryEntity();
@@ -115,15 +125,19 @@ class CategoryControllerTestIT extends AbstractIt {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
     void testDeleteCategoryNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/categories/{id}", 500L))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @WithMockUser(roles = "ADMIN")
     private CategoryDto createCategoryDto() {
         return CategoryDto.builder().name("Test Category updated").build();
     }
+
+    @WithMockUser(roles = "ADMIN")
     private CategoryEntity saveCategoryEntity() {
         return categoryRepository.save(CategoryEntity.builder()
                 .name("Test category")
