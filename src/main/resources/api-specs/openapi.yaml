@@ -8,6 +8,8 @@ servers:
 paths:
   /api/v1/products/{id}:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - product-controller
       operationId: getProductById
@@ -26,6 +28,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductResponseDto'
     put:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - product-controller
       operationId: updateProduct
@@ -50,6 +55,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProductResponseDto'
     delete:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - product-controller
       operationId: deleteProductById
@@ -65,6 +73,8 @@ paths:
           description: No Content
   /api/v1/orders/{id}:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - order-controller
       operationId: getOrderById
@@ -83,6 +93,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderResponseDto'
     put:
+      security:
+        - BearerAuth: [ ]
       tags:
         - order-controller
       operationId: updateOrder
@@ -107,6 +119,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderResponseDto'
     delete:
+      security:
+        - BearerAuth: [ ]
       tags:
         - order-controller
       operationId: deleteOrder
@@ -122,6 +136,8 @@ paths:
           description: OK
   /api/v1/categories/{id}:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - category-controller
       operationId: getCategoryById
@@ -140,6 +156,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CategoryResponseDto'
     put:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - category-controller
       operationId: update
@@ -164,6 +183,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CategoryResponseDto'
     delete:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - category-controller
       operationId: delete
@@ -179,6 +201,8 @@ paths:
           description: No Content
   /api/v1/products:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - product-controller
       operationId: getAllProducts
@@ -192,6 +216,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/ProductResponseDto'
     post:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - product-controller
       operationId: createProduct
@@ -210,6 +237,9 @@ paths:
                 $ref: '#/components/schemas/ProductResponseDto'
   /api/v1/orders:
     get:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - order-controller
       operationId: getAllOrders
@@ -223,6 +253,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/OrderResponseDto'
     post:
+      security:
+        - BearerAuth: [ ]
       tags:
         - order-controller
       operationId: createOrder
@@ -241,6 +273,8 @@ paths:
                 $ref: '#/components/schemas/OrderResponseDto'
   /api/v1/categories:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - category-controller
       operationId: getAllCategories
@@ -254,6 +288,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/CategoryResponseDto'
     post:
+      security:
+        - BearerAuth: [ ]
+          description: Requires `ADMIN` role.
       tags:
         - category-controller
       operationId: create
@@ -272,6 +309,8 @@ paths:
                 $ref: '#/components/schemas/CategoryResponseDto'
   /api/v1/products/filter:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - product-controller
       operationId: getProductsByPriceRange
@@ -299,6 +338,8 @@ paths:
                   $ref: '#/components/schemas/ProductDetailsProjection'
   /api/v1/cosmo-cats:
     get:
+      security:
+        - BearerAuth: [ ]
       tags:
         - cosmo-cat-controller
       operationId: getAllCosmoCats
@@ -312,6 +353,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/CosmoCatDto'
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ProductUpdateDto:
       required:
